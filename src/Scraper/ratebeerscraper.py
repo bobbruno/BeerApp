@@ -1,9 +1,11 @@
 import bs4
-from itertools import cycle
+import codecs
+import os
 import random
 import socket
 import time
-import urllib
+import urllib2
+from urlparse import urlparse
 
 import socks
 
@@ -14,34 +16,66 @@ def create_connection(address, timeout=None, source_address=None):
     return sock
 
 nGets = 0
+useCache = True
+SCRAPER_CACHE_DIR = '/home/bobbruno/workspace/BeerApp/dumps/'
 
 
 def getSite(site):
     '''
     Downloads a site through a proxy (different one each time) and up to
     100 retries.
-    :param site: str
-    :rtype: 
+    :param site: str Site URL
+    :rtype: str HTML
     '''
 
     print 'getting {}\n'.format(site)
-    global nGets
-    tryCounter = 0
-    time.sleep(random.expovariate(1 / 7.))
-    while True:
-        try:
-            nGets += 1
-            return urllib.urlopen(site)
-        except Exception, e:
-            tryCounter += 1
-            print 'Getting {} did not work ({})'.format(site, str(e))
-            if tryCounter >= 20:
-                print 'Could not get {}: Error {}'.format(site, str(e))
-                raise e
-            else:
-                continue
+    parsedURL = urlparse(site)
+    path = parsedURL.path
+    if (path == ''):
+        path = 'INDEX'
+    if (path[0] == '/'):
+        path = path[1:]
+    if (path[-1] == '/'):
+        path = '{}INDEX'.format(path)
+    dirPath = os.path.split(path)[0]
+    cacheDir = os.path.join(SCRAPER_CACHE_DIR, parsedURL.netloc, dirPath)
+    cacheFile = os.path.join(SCRAPER_CACHE_DIR, parsedURL.netloc, path)
+
+    if useCache:
+        if os.path.isfile(cacheFile):
+            inputStream = codecs.open(cacheFile, 'r', encoding='utf8')
+            html = inputStream.readlines()
+            inputStream.close()
+            return u''.join(html)
         else:
-            break
+            global nGets
+            tryCounter = 0
+            time.sleep(random.expovariate(1 / 7.))
+            while True:
+                try:
+                    nGets += 1
+                    request = urllib2.Request(site)
+                    request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:27.3) Gecko/20130101 Firefox/27.3')
+                    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+                    retVal = opener.open(request, timeout=30)
+                    theHTML = retVal.read()
+                    if useCache:
+                        if not os.path.exists(cacheDir):
+                            os.makedirs(cacheDir)
+                        fstream = codecs.open(cacheFile, 'w', encoding='utf8')
+                        fstream.write(theHTML.decode('latin-1'))
+                        fstream.close()
+                    return theHTML
+                except Exception, e:
+                    tryCounter += 1
+                    print 'Getting {} did not work ({})'.format(site, str(e))
+                    if tryCounter >= 20:
+                        print 'Could not get {}: Error {}'.format(site, str(e))
+                        raise e
+                    else:
+                        continue
+                else:
+                    break
 
 socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
 #  patch the socket module
@@ -52,7 +86,8 @@ socket.create_connection = create_connection
 #  This code captures all the countries and country subdivisions
 #  which have known breweries
 
-soup = bs4.BeautifulSoup(getSite('http://www.ratebeer.com/breweries/'))
+resposta = getSite('http://www.ratebeer.com/breweries/')
+soup = bs4.BeautifulSoup(resposta)
 breweries = soup.html.body.findChild(id='brewerCover').next_sibling.next_sibling    #  @IgnorePep8
 
 beerContinents = {}
@@ -90,12 +125,11 @@ while (len(runList) and (runs < 20)):
             for location, breweries in locations.iteritems():
                 print u'\t\tBreweries from {}'.format(location)
                 try:
-                    soup = bs4.BeautifulSoup(
-                        getSite('http://www.ratebeer.com/breweries/{}'.format(breweries[subURL]))
+                    resposta = getSite('http://www.ratebeer.com/breweries/{}'.format(breweries[subURL]))    #  @IgnorePep8
+                    soup = bs4.BeautifulSoup(resposta)
                 except:
                     retryList3[location] = {}
                     continue
-                br.response().read())
                 for bTabLin in soup.html.body.findChild(
                         id='brewerTable').findChild('tbody').childGenerator():
                     frCol = bTabLin.findChild()
