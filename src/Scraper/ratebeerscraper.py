@@ -1,5 +1,6 @@
 import bs4
 import codecs
+import cookielib
 import os
 import random
 import socket
@@ -20,12 +21,54 @@ useCache = True
 SCRAPER_CACHE_DIR = '/home/bobbruno/workspace/BeerApp/dumps/'
 
 
+def getSitePure(site):
+    """
+    Gets a site directly, with no caching whatsoever
+    :param site: URL of the site that is to be downloaded
+    :type site: str
+    :rtype str
+    """
+    global nGets
+    tryCounter = 0
+    while True:
+        try:
+            nGets += 1
+            request = urllib2.Request(site)
+            request.add_header('User-Agent', 'Your friendly neighborhood spider-man.')
+            cj = cookielib.CookieJar()
+            cj.clear()
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+            print('Calling open on {}').format(request.get_full_url())
+            retVal = opener.open(request)
+            time.sleep(random.expovariate(1 / 7.))
+            theHTML = retVal.read()
+        except Exception, e:
+            tryCounter += 1
+            print 'Getting {} did not work ({})'.format(site, str(e))
+            if tryCounter >= 10:
+                request = urllib2.Request('http://checkip.dyndns.com/')
+                request.add_header('User-Agent', 'Your friendly neighborhood spider-man.')
+                opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+                retVal = opener.open(request, timeout=60)
+                theHTML = retVal.read()
+                print 'Checking: {}'.format(theHTML)
+            if tryCounter >= 20:
+                print 'Could not get {}: Error {}'.format(site, str(e))
+                raise e
+            else:
+                time.sleep(random.expovariate(1 / 3.))
+                continue
+        else:
+            break
+    return theHTML
+
+
 def getSite(site):
     '''
     Downloads a site through a proxy (different one each time) and up to
     100 retries.
     :param site: str Site URL
-    :rtype: str HTML
+    :rtype str HTML
     '''
 
     print 'getting {}\n'.format(site)
@@ -48,39 +91,22 @@ def getSite(site):
             inputStream.close()
             return u''.join(html)
         else:
-            global nGets
-            tryCounter = 0
-            time.sleep(random.expovariate(1 / 7.))
-            while True:
-                try:
-                    nGets += 1
-                    request = urllib2.Request(site)
-                    request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:27.3) Gecko/20130101 Firefox/27.3')
-                    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-                    retVal = opener.open(request, timeout=30)
-                    theHTML = retVal.read()
-                    if useCache:
-                        if not os.path.exists(cacheDir):
-                            os.makedirs(cacheDir)
-                        fstream = codecs.open(cacheFile, 'w', encoding='utf8')
-                        fstream.write(theHTML.decode('latin-1'))
-                        fstream.close()
-                    return theHTML
-                except Exception, e:
-                    tryCounter += 1
-                    print 'Getting {} did not work ({})'.format(site, str(e))
-                    if tryCounter >= 20:
-                        print 'Could not get {}: Error {}'.format(site, str(e))
-                        raise e
-                    else:
-                        continue
-                else:
-                    break
+            theHTML = getSitePure(site)
+            if not os.path.exists(cacheDir):
+                os.makedirs(cacheDir)
+            fstream = codecs.open(cacheFile, 'w', encoding='utf8')
+            fstream.write(theHTML.decode('latin-1'))
+            fstream.close()
+    else:
+        theHTML = getSitePure(site)
+    return theHTML
+
 
 socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
 #  patch the socket module
 socket.socket = socks.socksocket
 socket.create_connection = create_connection
+socket.setdefaulttimeout(60)
 
 #  First, let's get the locations
 #  This code captures all the countries and country subdivisions
