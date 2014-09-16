@@ -1,294 +1,72 @@
 import bs4
-import codecs
-import cookielib
-from django.core.management.commands import startproject
 import os
-import random
-import socket
-import time
-import urllib2
-from urlparse import urlparse
+import sys
 
-import socks
+from Scraper import Scraper
 
 
+#  import codecs
 SCRAPER_CACHE_DIR = '/home/bobbruno/workspace/BeerApp/dumps/'
 
+accounts = [('Eo8xsuVxwG1V', 'Eo8xsuVxwG1V@meltmail.com', 'Eo8xsuVxwG1V01'),
+            ('928vr9z45T7b', '928vr9z45T7b@meltmail.com', '928vr9z45T7b01'),
+            ('sYprtRIeu2GF', 'sYprtRIeu2GF@meltmail.com', 'sYprtRIeu2GF01')]
 
-class Scraper(object):
+uaS = ['Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36',
+       'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20120101 Firefox/29.0',
+       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36',
+       'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.67 Safari/537.36']
+
+def processBeerRow(tag):
     """
-    Controls all the scraping for a particular website and its subsites.
-    scrapeSite method should be overriden to manage navigation through
-    the web pages.
+    Gets a Tag object with a full row of beer data and returns all info on
+    that beer as a list:
+        0: Beer name
+        1: Beer id
+        2: beer URL
+        3: abv
+        4: avg
+        5: overall
+        6: style rating
+        7: ratings
+    :param tag: tag pointing to the line of data about the beer
+    :type tag: bs4.Tag
+    :rtype list
     """
-    @staticmethod
-    def _createConnection(address, timeout=None, source_address=None):
-        sock = socks.socksocket()
-        sock.connect(address)
-        return sock
-
-    def __init__(self, sleepTime=5, maxTries=20,
-                 useCache=True, clearCookies=False,
-                 cacheDir='./', proxy='127.0.0.1',
-                 proxyPort=9050, verbose=False, maxGets=None,
-                 uaString='Your friendly neighbourhood spiderbot.'):
-        """
-        Constructor for the class.
-        :param sleepTime: average time to sleep (in seconds) between calls.
-               The scraper will wait a random amount of time based on that
-               average after GETting each page.
-        :type sleepTime: int
-        :param maxTries: maximum number of retries before raising an exception.
-               Defaults to 20.
-        :type maxTries: int
-        :param useCache: defines if the site should be cached or not.
-               True by default
-        :type useCache: bool
-        :param clearCookies: Defines if the scraper should clear cookies
-               before each access
-        :type clearCookies: bool
-        :param cacheDir: Directory where cached pages should be stored.
-               Defaults to current directory
-        :type cacheDir: str
-        :param proxy: string address of the proxy website.
-               Defaults to tor's default address.
-        :type proxy: str
-        :param proxyPort: Port number for the proxy.
-               Defaults to tor's default port
-        :type proxyPort: int
-        :param verbose: Defines if the scraper should produce messages
-               during its work or not. Defaults to false
-        :type verbose: bool
-        :param maxGets: if defined, sets a limit on the number of pages,
-              after which the scraper will always fail.
-        :type maxGets: int
-        :param uaString: user-agent string
-        :type uaString: str
-        """
-        self.sleepTime = sleepTime
-        self.maxTries = maxTries
-        self.useCache = useCache
-        self.clearCookies = clearCookies
-        self.cacheDir = cacheDir
-        self.proxy = proxy
-        self.proxyPort = proxyPort
-        self.nGets = 0
-        self.verbose = verbose
-        self.maxGets = maxGets
-        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, self.proxy, self.proxyPort)
-        socket.socket = socks.socksocket
-        socket.create_connection = Scraper._createConnection
-        socket.setdefaulttimeout(60)
-        self.cj = cookielib.CookieJar()
-        self.uaString = uaString
-
-    def changeConnParms(self, sleepTime=None, maxTries=None, useCache=None,
-                        clearCookies=None, cacheDir=None, proxy=None,
-                        proxyPort=None, verbose=None, maxGets=None,
-                        uaString=None):
-        """
-        Changes any of the connection parameters specified.
-        :param sleepTime: average time to sleep (in seconds) between calls.
-               The scraper will wait a random amount of time based on that
-               average after GETting each page.
-        :type sleepTime: int
-        :param maxTries: maximum number of retries before raising an exception.
-        :type maxTries: int
-        :param useCache: defines if the site should be cached or not.
-        :type useCache: bool
-        :param clearCookies: Defines if the scraper should clear cookies
-               before each access
-        :type clearCookies: bool
-        :param cacheDir: Directory where cached pages should be stored.
-        :type cacheDir: str
-        :param proxy: string address of the proxy website.
-        :type proxy: str
-        :param proxyPort: Port number for the proxy.
-        :type proxyPort: int
-        :param verbose: Defines if the scraper should produce messages
-               during its work or not.
-        :type verbose: bool
-        :param maxGets: if defined, sets a limit on the number of pages,
-              after which the scrapDefaults to tor's default porter will always fail.
-        :type maxGets: int
-        :param uaString: user-agent string
-        :type uaString: str
-        """
-        if (sleepTime is not None):
-            self.sleepTime = sleepTime
-        if (maxTries is not None):
-            self.maxTries = maxTries
-        if (useCache is not None):
-            self.useCache = useCache
-        if (clearCookies is not None):
-            self.clearCookies = clearCookies
-        if (cacheDir is not None):
-            self.cacheDir = cacheDir
-        if (proxy is not None):
-            self.proxy = proxy
-        if (proxyPort is not None):
-            self.proxyPort = proxyPort
-        if (verbose is not None):
-            self.verbose = verbose
-        if (maxGets is not None):
-            self.maxGets = maxGets
-        if (uaString is not None):
-            self.uaString = uaString
-
-    def login(self, user='', password='', loginPage=None, loginForm=None,
-               startPage=None,):
-        """
-        Login method for the scraper.
-        :param user: Username to be used for login
-        :type user: str
-        :param password: password for that user
-        :type password: str
-        :param loginPage: URL of the login page
-        :type loginPage: str
-        :param loginForm: name of the Form object to look for
-        :type loginForm: str
-        :param startPage: URL of an optional starting page to navigate
-               from, simulating a real user.
-        :type startPage: str
-        """
-        self.user = user
-        self.password = password
-        #  First, let's go to the initial page, if it's there
-        if (startPage is not None):
-            self._getSitePure(startPage)
-        text = self._getSitePure(loginPage)
-
-
-    def beforeFirst(self):
-        """
-        Gets called before the first call to getSite(). Should deal with
-        logins, etc.
-        This method should be overriden by any descendants.
-        """
-        pass
-
-    def _getSitePure(self, site):
-        """
-        Gets a site directly, with no caching whatsoever
-        :param site: URL of the site that is to be downloaded
-        :type site: str
-        :rtype str
-        """
-        tryCounter = 0
-        while True:
-            try:
-                self.nGets += 1
-                request = urllib2.Request(site)
-                request.add_header('User-Agent', self.uaString)
-                if self.clearCookies:
-                    self.cj.clear()
-                opener = urllib2.build_opener(
-                    urllib2.HTTPCookieProcessor(self.cj))
-                if self.verbose:
-                    print('Calling open on {}').format(request.get_full_url())
-                retVal = opener.open(request)
-                time.sleep(random.expovariate(1 / float(self.sleepTime)))
-                theHTML = retVal.read()
-            except Exception, e:
-                tryCounter += 1
-                if self.verbose:
-                    print 'Getting {} did not work ({})'.format(site, str(e))
-                    if (tryCounter >= self.maxTries // 2):
-                        request = urllib2.Request('http://checkip.dyndns.com/')
-                        request.add_header('User-Agent',
-                            'Your friendly neighborhood spider-man.')
-                        opener = urllib2.build_opener(
-                            urllib2.HTTPCookieProcessor())
-                        retVal = opener.open(request, timeout=60)
-                        theHTML = retVal.read()
-                        print 'Checking: {}'.format(theHTML)
-                if (tryCounter >= self.maxTries):
-                    if self.verbose:
-                        print 'Could not get {}: Error {}'.format(site, str(e))
-                    raise e
-                else:
-                    time.sleep(random.expovariate(1 / float(self.sleepTime)))
-                    continue
-            else:
-                break
-        return theHTML
-
-    def getSite(self, site):
-        '''
-        Returns the HTML of the site requested. Raises an exception if more
-        than maxTries attempts are made and the site cannot be recovered.
-        :param site: Site URL
-        :type site: str
-        :rtype str
-        '''
-        if self.verbose:
-            print 'getting {}\n'.format(site)
-
-        if self.useCache:
-            parsedURL = urlparse(site)
-            path = parsedURL.path
-            if (path == ''):
-                path = 'INDEX'
-            if (path[0] == '/'):
-                path = path[1:]
-            if (path[-1] == '/'):
-                path = '{}INDEX'.format(path)
-            dirPath = os.path.split(path)[0]
-            cacheDir = os.path.join(self.cacheDir, parsedURL.netloc, dirPath)
-            cacheFile = os.path.join(self.cacheDir, parsedURL.netloc, path)
-            if os.path.isfile(cacheFile):
-                inputStream = codecs.open(cacheFile, 'r', encoding='utf8')
-                html = inputStream.readlines()
-                inputStream.close()
-                return u''.join(html)
-            else:
-                theHTML = self._getSitePure(site)
-                if not os.path.exists(cacheDir):
-                    os.makedirs(cacheDir)
-                fstream = codecs.open(cacheFile, 'w', encoding='utf8')
-                fstream.write(theHTML.decode('latin-1'))
-                fstream.close()
-        else:
-            theHTML = self._getSitePure(site)
-        return theHTML
-
-    def getSiteCollection(self, siteCol):
-        """
-        Gets a collection of sites passed to it. Returns a dictionary
-        of {id: html} for pages successfully recovered. If a page in the
-        original collection cannot be recovered, it won't be on the
-        returned dictionary.
-        :param siteCol: dictionary of sites to be recovered,
-            formatted as {id: URL}.Id can be any type acceptable
-            as a dictionary key.
-        :type siteCol: dict
-        :rtype dict
-        """
-        sites = {}
-        for key, url in siteCol.iteritems():
-            try:
-                theHTML = self.getSite(url)
-            except:
-                continue
-            else:
-                sites[key] = theHTML
-        return sites
-
+    if tag.findChild('span', {'class': 'rip'}) is not None:
+        return []
+    try:
+        retVal = [tag.contents[0].contents[1].text]
+        beerURL = tag.contents[0].contents[1].attrs['href']
+        retVal.append(beerURL.split('/')[-2])
+        retVal.append(beerURL)
+        retVal.append(tag.contents[2].text)
+        retVal.append(tag.contents[3].text)
+        retVal.append(tag.contents[4].text)
+        retVal.append(tag.contents[5].text)
+        retVal.append(tag.contents[6].text)
+    except Exception, e:
+        print e
+        retVal = []
+    return retVal
 
 
 #  First, let's get the locations
 #  This code captures all the countries and country subdivisions
 #  which have known breweries
 
-beerScraper = Scraper()
+beerScraper = Scraper(sleepTime=3, cacheDir=SCRAPER_CACHE_DIR, verbose=True, uaString=uaS[2])
+result = beerScraper.login(accounts[1][0], accounts[1][2],
+                           'http://www.ratebeer.com/login.asp',
+                           'signin', 'http://www.ratebeer.com')
 
-resposta = getSite('http://www.ratebeer.com/breweries/')
+resposta = beerScraper.getSite('http://www.ratebeer.com/breweries/')
 soup = bs4.BeautifulSoup(resposta)
-breweries = soup.html.body.findChild(id='brewerCover').next_sibling.next_sibling    #  @IgnorePep8
+brwrs = soup.html.body.findChild(id='brewerCover').next_sibling.next_sibling    #  @IgnorePep8
 
 beerContinents = {}
 bigCountry = ''
-for i in breweries.children:
+for i in brwrs.children:
     if (type(i) == bs4.element.Tag):    #  Found a continent
         if (i.name == u'div'):
             currContinent = i.text
@@ -321,7 +99,7 @@ while (len(runList) and (runs < 20)):
             for location, breweries in locations.iteritems():
                 print u'\t\tBreweries from {}'.format(location)
                 try:
-                    resposta = getSite('http://www.ratebeer.com/breweries/{}'.format(breweries[subURL]))    #  @IgnorePep8
+                    resposta = beerScraper.getSite('http://www.ratebeer.com/breweries/{}'.format(breweries[subURL]))    #  @IgnorePep8
                     soup = bs4.BeautifulSoup(resposta)
                 except:
                     retryList3[location] = {}
@@ -334,46 +112,69 @@ while (len(runList) and (runs < 20)):
                     brType = frCol.findNextSibling()
                     brNBeer = brType.findNextSibling()
                     brEstDate = int(brNBeer.findNextSibling().findNextSibling().text)    #  @IgnorePep8
-                    breweries[brewer.text] = [brewer.attrs['href'][9:].split('/')[1],
+                    breweries[subBreweries][brewer.text] = [brewer.attrs['href'][9:].split('/')[1],
                                     brType.text, int(brNBeer.text), brEstDate, {}]
-                if (nGets > 100):
-                    break
             if len(retryList3):
                 retryList2[country] = retryList3.copy()
-            if (nGets > 100):
-                break
         if len(retryList2):
             retryList1[continent] = retryList2.copy()
-        if (nGets > 100):
-            runs = 21
-            break
-
+        break
     runList = retryList1.copy()
+    break
     runs += 1
 
-with open('/home/bobbruno/workspace/BeerApp/dumps/continents.csv', 'w') as fconts, \
-    open('/home/bobbruno/workspace/BeerApp/dumps/countries.csv', 'w') as fcountries, \
-    open('/home/bobbruno/workspace/BeerApp/dumps/locations.csv', 'w') as flocs, \
-    open('/home/bobbruno/workspace/BeerApp/dumps/breweries.csv', 'w') as fbrewers:
-        fconts.write('id, Continent\n')
-        fcountries.write('Continent, id, Country\n')
-        flocs.write('Continent, Country, id, Location\n')
-        fbrewers.write('Continent, Country, Location, id, Brewery, Brewery Type, NBeers, EstYear\n')
-        maxcounter = 0
-        for i1, (continent, countries) in enumerate(beerContinents.iteritems(), 1):    #  Continents
-            if maxcounter >= 100:
-                break
-            print i1, continent
-            fconts.write(u'{}, "{}"\n'.format(i1, continent).encode('utf8'))
-            for i2, (country, location) in enumerate(countries.iteritems(), 1):    #  Countries
-                print i1, i2, location
-                fcountries.write(u'{}, {}, "{}"\n'.format(i1, i2, country).encode('utf8'))
-                for i3, (location, breweries) in enumerate(location.iteritems(), 1):    #  Locations
-                    print i1, i2, i3, location
-                    flocs.write(u'{}, {}, {}, "{}"\n'.format(i1, i2, i3, location).encode('utf8'))
-                    for brewery, brewerInfo in breweries.iteritems():
-                        print i1, i2, i3, brewerInfo[0], brewery, brewerInfo[1], brewerInfo[2], brewerInfo[3]
-                        fbrewers.write(u'{}, {}, {}, {}, "{}", "{}", {}, {}\n'.format(
-                            i1, i2, i3, brewerInfo[0], brewery, brewerInfo[1], brewerInfo[2], brewerInfo[3]).encode('utf8'))
-                        maxcounter += 1
+#  Now let's get some beers from a brewery
+#  I can get:
+#  Associated place: <span class="beerfoot"></span>.nextSibling.nextSibling.firstChild: get href and text
+#  website: from previous last sibling, nextSibling.firstChild: get href and text
+#  facebook,
+#  email
+#  The beer list with:
+#     Beer name, abv, avg/5 overall, stype, ratings
 
+with open('/home/bobbruno/workspace/BeerApp/dumps/continents.csv', 'w') as fConts, \
+    open('/home/bobbruno/workspace/BeerApp/dumps/countries.csv', 'w') as fCountries, \
+    open('/home/bobbruno/workspace/BeerApp/dumps/locations.csv', 'w') as fLocs, \
+    open('/home/bobbruno/workspace/BeerApp/dumps/breweries.csv', 'w') as fBrewers, \
+    open('/home/bobbruno/workspace/BeerApp/dumps/beers.csv', 'w') as fBeers:
+    fConts.write('id, Continent\n')
+    fCountries.write('Continent, id, Country\n')
+    fLocs.write('Continent, Country, id, Location\n')
+    fBrewers.write('Continent, Country, Location, id, Brewery, Brewery Type, NBeers, EstYear\n')
+    fBeers.write('Continent, Country, Location, Brewery, id, Beer, Abv, Avg, Overall, StyleRt, NRatings\n')
+    maxcounter = 0
+    for i1, (continent, countries) in enumerate(beerContinents.iteritems(), 1):    #  Continents
+        print i1, continent
+        fConts.write(u'{}, "{}"\n'.format(i1, continent).encode('utf8'))
+        for i2, (country, location) in enumerate(countries.iteritems(), 1):    #  Countries
+            print i1, i2, location
+            fCountries.write(u'{}, {}, "{}"\n'.format(i1, i2, country).encode('utf8'))
+            for i3, (location, breweries) in enumerate(location.iteritems(), 1):    #  Locations
+                #  print i1, i2, i3, location
+                fLocs.write(u'{}, {}, {}, "{}"\n'.format(i1, i2, i3, location).encode('utf8'))
+                for brewery, brewerInfo in breweries[1].iteritems():
+                    #  print i1, i2, i3, brewerInfo[0], brewery, brewerInfo[1], brewerInfo[2], brewerInfo[3]
+                    resposta = beerScraper.getSite('http://www.ratebeer.com/brewers/x/{}/'.format(brewerInfo[0]))
+                    soup = bs4.BeautifulSoup(resposta)
+                    """
+                    brBase = soup.html.body.findChild('td', {'width':'85%'}).findChild('span', {'class': 'beerfoot'}).findChild('span', {'class': 'beerfoot'}).nextSibling.nextSibling.nextSibling
+                    try:
+                        assocPlace = brBase.text
+                        assocURL = brBase.contents[0].attrs['href']
+                        brURL = brBase.nextSibling.nextSibling.nextSibling.attrs['href']
+                        brFcbk = brBase.nextSibling.nextSibling.nextSibling.nextSibling.attrs['href']"""
+                    fBrewers.write(u'{}, {}, {}, {}, "{}", "{}", {}, {}\n'.format(i1, i2, i3, brewerInfo[0], brewery, brewerInfo[1], brewerInfo[2], brewerInfo[3]).encode('utf8'))
+                    beers = brewerInfo[4]
+                    brBase = soup.html.body.findChild('td', {'width': '85%'}).findChild('span', {'class': 'beerfoot'}).findChild('table', {'class': 'maintable nohover'})
+                    for b in  brBase.findChildren('tr', {'class': 'dataTableRowAlternate'}):
+                        beerData = processBeerRow(b)
+                        if len(beerData):
+                            beers[beerData[0]] = beerData[1:] + [{}]
+                            fBeers.write(u'{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n'.format(
+                                i1, i2, i3, brewerInfo[0], beerData[1], beerData[0], beerData[3], beerData[4], beerData[5], beerData[6], beerData[7]).encode('utf8'))
+                    for b in  brBase.findChildren('tr', {'class': ''}):
+                        beerData = processBeerRow(b)
+                        if len(beerData):
+                            beers[beerData[0]] = beerData[1:] + [{}]
+                            fBeers.write(u'{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n'.format(
+                                i1, i2, i3, brewerInfo[0], beerData[1], beerData[0], beerData[2], beerData[3], beerData[4], beerData[5], beerData[6]).encode('utf8'))
