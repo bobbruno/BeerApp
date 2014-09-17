@@ -28,36 +28,26 @@ class Scraper(object):
                  uaString='Your friendly neighbourhood spiderbot.'):
         """
         Constructor for the class.
-        :param sleepTime: average time to sleep (in seconds) between calls.
+        :param int sleepTime: average time to sleep (in seconds) between calls.
                The scraper will wait a random amount of time based on that
                average after GETting each page.
-        :type sleepTime: int
-        :param maxTries: maximum number of retries before raising an exception.
+        :param int maxTries: maximum number of retries before raising an exception.
                Defaults to 20.
-        :type maxTries: int
-        :param useCache: defines if the site should be cached or not.
+        :param bool useCache: defines if the site should be cached or not.
                True by default
-        :type useCache: bool
-        :param clearCookies: Defines if the scraper should clear cookies
+        :param bool clearCookies: Defines if the scraper should clear cookies
                before each access
-        :type clearCookies: bool
-        :param cacheDir: Directory where cached pages should be stored.
+        :param str cacheDir: Directory where cached pages should be stored.
                Defaults to current directory
-        :type cacheDir: str
-        :param proxy: string address of the proxy website.
+        :param str proxy: string address of the proxy website.
                Defaults to tor's default address.
-        :type proxy: str
-        :param proxyPort: Port number for the proxy.
+        :param int proxyPort: Port number for the proxy.
                Defaults to tor's default port
-        :type proxyPort: int
-        :param verbose: Defines if the scraper should produce messages
+        :param bool verbose: Defines if the scraper should produce messages
                during its work or not. Defaults to false
-        :type verbose: bool
-        :param maxGets: if defined, sets a limit on the number of pages,
+        :param int maxGets: if defined, sets a limit on the number of pages,
               after which the scraper will always fail.
-        :type maxGets: int
-        :param uaString: user-agent string
-        :type uaString: str
+        :param str uaString: user-agent string
         """
         self.sleepTime = sleepTime
         self.maxTries = maxTries
@@ -69,7 +59,8 @@ class Scraper(object):
         self.nGets = 0
         self.verbose = verbose
         self.maxGets = maxGets
-        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, self.proxy, self.proxyPort)
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5,
+                              self.proxy, self.proxyPort)
         socket.socket = socks.socksocket
         socket.create_connection = Scraper._createConnection
         socket.setdefaulttimeout(60)
@@ -90,31 +81,21 @@ class Scraper(object):
                         uaString=None):
         """
         Changes any of the connection parameters specified.
-        :param sleepTime: average time to sleep (in seconds) between calls.
+        :param int sleepTime: average time to sleep (in seconds) between calls.
                The scraper will wait a random amount of time based on that
                average after GETting each page.
-        :type sleepTime: int
-        :param maxTries: maximum number of retries before raising an exception.
-        :type maxTries: int
-        :param useCache: defines if the site should be cached or not.
-        :type useCache: bool
-        :param clearCookies: Defines if the scraper should clear cookies
+        :param int maxTries: maximum number of retries before raising an exception.
+        :param bool useCache: defines if the site should be cached or not.
+        :param bool clearCookies: Defines if the scraper should clear cookies
                before each access
-        :type clearCookies: bool
-        :param cacheDir: Directory where cached pages should be stored.
-        :type cacheDir: str
-        :param proxy: string address of the proxy website.
-        :type proxy: str
-        :param proxyPort: Port number for the proxy.
-        :type proxyPort: int
-        :param verbose: Defines if the scraper should produce messages
+        :param str cacheDir: Directory where cached pages should be stored.
+        :param str proxy: string address of the proxy website.
+        :param int proxyPort: Port number for the proxy.
+        :param bool verbose: Defines if the scraper should produce messages
                during its work or not.
-        :type verbose: bool
-        :param maxGets: if defined, sets a limit on the number of pages,
+        :param int maxGets: if defined, sets a limit on the number of pages,
               after which the scrapDefaults to tor's default porter will always fail.
-        :type maxGets: int
-        :param uaString: user-agent string
-        :type uaString: str
+        :param str uaString: user-agent string
         """
         if (sleepTime is not None):
             self.sleepTime = sleepTime
@@ -139,20 +120,15 @@ class Scraper(object):
             self.br.addheaders = [('User-agent', self.uaString)]
 
     def login(self, user='', password='', loginPage=None, loginForm=None,
-               startPage=None,):
+              startPage=None,):
         """
         Login method for the scraper. Actually just stores the params for later use.
-        :param user: Username to be used for login
-        :type user: str
-        :param password: password for that user
-        :type password: str
-        :param loginPage: URL of the login page
-        :type loginPage: str
-        :param loginForm: name of the Form object to look for
-        :type loginForm: str
-        :param startPage: URL of an optional starting page to navigate
+        :param str user: Username to be used for login
+        :param str password: password for that user
+        :param str loginPage: URL of the login page
+        :param str loginForm: name of the Form object to look for
+        :param str startPage: URL of an optional starting page to navigate
                from, simulating a real user.
-        :type startPage: str
         """
         self.user = user
         self.password = password
@@ -181,8 +157,7 @@ class Scraper(object):
     def _getSitePure(self, site):
         """
         Gets a site directly, with no caching whatsoever
-        :param site: URL of the site that is to be downloaded
-        :type site: str
+        :param str site: URL of the site that is to be downloaded
         :rtype str
         """
 
@@ -195,7 +170,7 @@ class Scraper(object):
                 if self.clearCookies:
                     self.br._ua_handlers['_cookies'].cookiejar.clear_session_cookies()
                 if self.verbose:
-                    print('Calling open on {}').format(site)
+                    print('Calling open on {}').format(site).encode('utf8')
                 retVal = self.br.open(site)
                 if self.sleepTime:
                     time.sleep(random.expovariate(1 / float(self.sleepTime)))
@@ -203,14 +178,14 @@ class Scraper(object):
             except Exception, e:
                 tryCounter += 1
                 if self.verbose:
-                    print 'Getting {} did not work ({})'.format(site, str(e))
+                    print 'Getting {} did not work ({})'.format(site, str(e)).encode('utf8')
                     if (tryCounter >= self.maxTries // 2):
                         retVal = self.br.open('http://checkip.dyndns.com/')
                         theHTML = retVal.read()
-                        print 'Checking: {}'.format(theHTML)
+                        print 'Checking: {}'.format(theHTML).encode('utf8')
                 if (tryCounter >= self.maxTries):
                     if self.verbose:
-                        print 'Could not get {}: Error {}'.format(site, str(e))
+                        print 'Could not get {}: Error {}'.format(site, str(e)).encode('utf8')
                     raise e
                 else:
                     if self.sleepTime:
@@ -224,12 +199,11 @@ class Scraper(object):
         '''
         Returns the HTML of the site requested. Raises an exception if more
         than maxTries attempts are made and the site cannot be recovered.
-        :param site: Site URL
-        :type site: str
+        :param str site: Site URL
         :rtype str
         '''
         if self.verbose:
-            print 'getting {}\n'.format(site)
+            print 'getting {}\n'.format(site).encode('utf8')
 
         if self.useCache:
             parsedURL = urlparse(site)
@@ -265,10 +239,9 @@ class Scraper(object):
         of {id: html} for pages successfully recovered. If a page in the
         original collection cannot be recovered, it won't be on the
         returned dictionary.
-        :param siteCol: dictionary of sites to be recovered,
+        :param dict siteCol: dictionary of sites to be recovered,
             formatted as {id: URL}.Id can be any type acceptable
             as a dictionary key.
-        :type siteCol: dict
         :rtype dict
         """
         sites = {}
