@@ -26,7 +26,7 @@ class WrongBeer(Exception):
         return 'Expected {}, got {}'.format(self.beerId, self.wrongId)
 
 
-class beerGlass(object):
+class BeerGlass(object):
     def __init__(self, glassId, glassName):
         self.glassId = glassId
         self.glassName = glassName
@@ -135,7 +135,6 @@ class Beer(object):
                     bavBot=self.availBottle, bavTap=self.availTap,
                     bNRatings=self.nRatings, bNCals=self.calories,
                     city=self.city, season=self.seasonality, bStyle=self.styleId)
-        #  TODO: Store the ratings
 
     def __repr__(self):
         return u'{bId}'.format(self.id)
@@ -167,7 +166,7 @@ class Beer(object):
         #  TODO: Check for uniqueness. Key would be userid, beerid, date
 
     def rate(self, userId, userName, final, aroma, appearance, taste, palate, overall, location, date, notes):
-        """
+        """float
         Creates a user rating for the beer based on the raw information passed.
         :param int userId: Id# of the user
         :param str userName: Text identifier of the user
@@ -435,8 +434,8 @@ class Parser(object):
         self._currCountry = None
         self._currLocation = None
         self._currBrewery = None
+        self._currBeer = None
         self._nConts, self._nCountries, self._nLocs = -1, -1, -1
-
         if initFiles:
             self.initializeFiles()
 
@@ -461,18 +460,70 @@ class Parser(object):
 
         :param Beer beer: beer object being parsed.
         :param str beerURL: beer's landing page.
-        :rtype Beer: the beer object that was passed.
+        :rtype Beer
         """
+        def getHeader(beerPage):
+            """
+            Processes the header of the beer page, getting the beer's info.
+            :param bs4.Tag beerPage: the beer's page contents
+            :rtype Beer
+            """
+            beerId = int(beerURL.split('/')[-2])
+            currTag = beerPage.findChild('div', id='container').contents[0].contents[0].contents[0].contents[1].contents[0]
+            beerName = currTag.contents[7].text
+            currTag = beerPage.findChild('div', {'style': 'background-color: #036; width: 100px; height: 100px; border-radius: 130px;z-index: 5;text-align: center; '})
+            currTag2 = currTag.findChild('span', {'itemprop': 'average'})
+            overPerf = float(currTag2.text)
+            currTag = currTag.next_sibling    #  Move to the style score HTML
+            #  TODO: Deal with no value for this. Right now I'm avoiding anything with less than 10 ratings
+            stylePerf = float(currTag.text.replace('style', ''))
+            currTag = currTag.parent.parent.next_sibling
+            currTag2 = currTag.contents[0].findChild('big')    #  Beer style HTML
+            currTag2 = currTag2.next_sibling.next_sibling.next_sibling
+            style = int(currTag2.attrs['href'].split('/')[-2])
+            #  TODO: See what to do with the style names - I'll probably need them for presenting
+            styleName = currTag2.text
+            currTag2 = currTag2.find_next_sibling('a')    #  City HTML
+            if currTag2 is not None:
+                #  FIXME: The city id is most certainly wrong (it's an URL)
+                city = City(int(currTag2.attrs['href']), currTag2.text)
+            currTag2 = currTag.contents[1]    #  Pouring glass HTML
+            glasses = []
+            for g in currTag2.findChildren('a'):
+                glasses.append(BeerGlass(g.attrs['href'].split('=')[-1], g.text))
+            currTag2 = currTag.contents[3].contents[0].contents[1]    #  Availability table HTML
+            availBottle = unicode(currTag2.contents[0].contents[2])    #  Hopefully, the beer's availability
+            currTag2 = currTag2.next_sibling.next_sibling    #  Move to tap avail HTML
+            availTap = unicode(currTag2.contents[0].contents[2])
+            currTag2 = currTag2.next_sibling.next_sibling    #  Move to gen distrib HTML
+            distrScope = currTag2.contents[0].contents[0].contents[0].text
+            currTag = currTag.parent.parent.next_sibling    #  Beer numeric data
+            currTag2 = currTag.contents[0].contents[0].next_sibling    #  Number of Ratings
+            nRatings = int(currTag2.text)
+            currTag2 = currTag2.next_sibling.next_sibling    #  weighted Average
+            avgRate = float(currTag2.contents[1].text)
+            currTag2 = currTag2.next_sibling.next_sibling    #  Seasonality
+            seasonality = currTag2.text
+            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  IBU
+            IBU = int(currTag2.text)
+            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  Calories
+            calories = int(currTag2.text)
+            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  abv
+            abv = float(currTag2.text[:-2])
+            theBeer = Beer(beerId, beerName, self._currBrewery, beerURL, style,
+                           abv, IBU, calories, glasses, avgRate, overPerf,
+                           stylePerf, nRatings, city, availBottle, seasonality,
+                           availTap, distrScope)
+            return theBeer
+
         def getRatings(beerPg):
             """
             Gets the ratings from the table at XPath '//*[@id="container"]/span/table/tbody/tr[2]/td[2]/div/table[3]'
             :param Tag beerPg: the beer page itself
-            :rtype list
             """
             currTag = beerPg.body.findChild('td', {'id': 'tdL'}).next_sibling
             currTag = currTag.contents[0].contents[19]
             currTag2 = currTag.contents[0].contents[0].contents[0]
-            ratings = []
             while currTag2 is not None:
                 if (currTag2.name == 'table'):    #  Skipping ad blocks in the middle of the table
                     currTag2 = currTag2.next_sibling.next_sibling
@@ -503,61 +554,35 @@ class Parser(object):
                 rateDate = datetime.datetime.strptime(currTag3.split('-')[-1].strip(), "%b %d, %Y")    #  TODO: Check if locale will cause problems here
                 currTag2 = currTag2.next_sibling.next_sibling    #  Moving to the notes
                 rateNotes = currTag2.text    #  TODO: Check what kinds of characters I need to process in order to avoid problems. Maybe encapsulate in the object.
-                ratings.append(UserRating(beer, userId, userName, compound, aroma, appearance, taste, palate, overall, rateLoc, rateDate, rateNotes))
+                theRating = UserRating(self._currBeer, userId, userName,
+                                       compound, aroma, appearance, taste,
+                                       palate, overall, rateLoc, rateDate,
+                                       rateNotes)
+                self._currBeer.addRating(theRating)
                 #  Go to the next line, if there's one
                 currTag2 = currTag2.next_sibling.next_sibling
-            return ratings
 
+        beerHTML = self.scraper.getSite(beerURL)
+        beerPage = bs4.BeautifulSoup(beerHTML)
+        #  Get beer header information
+        theBeer = getHeader(beerPage.html.body)
+        self._currBeer = theBeer
+        #  TODO: I should limit the call to getRatings to a list of interesting countries only
+        getRatings(beerPage)
+        #  Double-quote ratings text and replace whatever double quotes are inside with single quotes
+
+        #  Check if there are more rating pages
+        #  //*[@id="container"]/span/table/tbody/tr[2]/td[2]/div
+        currTag = beerPage.html.body.findChild('div', id='container').contents[0].contents[0].contents[1].contents[1].contents[0]
+        for currTag2 in currTag.findChildren('a', recursive=False):
+            beerHTML = self.scraper.getSite(currTag2.attrs['href'])
+            beerPg2 = bs4.BeautifulSoup(beerHTML)
+            getRatings(beerPg2)
         with open('{}/ratings.csv'.format(self.fLocation), 'a') as fReviews:
-            beerHTML = self.scraper.getSite(beerURL)
-            beerPage = bs4.BeautifulSoup(beerHTML)
-            #  Get beer header information
-            currTag = beerPage.findChild('div', {'style': 'background-color: #036; width: 100px; height: 100px; border-radius: 130px;z-index: 5;text-align: center; '})
-            currTag2 = currTag.findChild('span', {'itemprop': 'average'})
-            beer.overPerf = float(currTag2.text)
-            currTag = currTag.next_sibling    #  Move to the style score HTML
-            #  TODO: Deal with no value for this. Right now I'm avoiding anything with less than 10 ratings
-            beer.stylePerf = float(currTag.text.replace('style', ''))
-            currTag = currTag.parent.parent.next_sibling
-            currTag2 = currTag.contents[0].findChild('big')    #  Beer style HTML
-            currTag2 = currTag2.next_sibling.next_sibling.next_sibling
-            beer.style = int(currTag2.attrs['href'].split('/')[-2])
-            styleName = currTag2.text
-            currTag2 = currTag2.find_next_sibling('a')    #  City HTML
-            if currTag2 is not None:
-                beerCityName = currTag2.text
-                beerCityId = currTag2.attrs['href']
-            currTag2 = currTag.contents[1]    #  Pouring glass HTML
-            glassId = []
-            glassText = []
-            for glass in currTag2.findChildren('a'):
-                glassId.append(glass.attrs['href'].split('=')[-1])
-                glassText.append(glass.text)
-            currTag2 = currTag.contents[3].contents[0].contents[1]    #  Availability table HTML
-            availBottle = unicode(currTag2.contents[0].contents[2])    #  Hopefully, the beer's availability
-            currTag2 = currTag2.next_sibling.next_sibling    #  Move to tap avail HTML
-            availTap = unicode(currTag2.contents[0].contents[2])
-            currTag2 = currTag2.next_sibling.next_sibling    #  Move to gen distrib HTML
-            distrScope = currTag2.contents[0].contents[0].contents[0].text
-            currTag = currTag.parent.parent.next_sibling    #  Beer numeric data
-            currTag2 = currTag.contents[0].contents[0].next_sibling.next_sibling.next_sibling    #  Seasonality
-            currTag2 = currTag2.next_sibling.next_sibling
-            seasonality = currTag2.text
-            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  IBU
-            IBU = int(currTag2.text)
-            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  Calories
-            calories = int(currTag2.text)
-            #  TODO: This is where I should save the beer
-            #  TODO: I should limit the call to getRatings to a list of interesting countries only
-            ratings = getRatings(beerPage)
-            #  Double-quote ratings text and replace whatever double quotes are inside with single quotes
-
-            #  Check if there are more rating pages
-            for currTag2 in currTag.parent.findChildren('a', recursive=False):
-                beerHTML = self.scraper.getSite(currTag2.attrs['href'])
-                beerPg2 = bs4.BeautifulSoup(beerHTML)
-                ratings += getRatings(beerPg2)
-        return ratings
+            for r in theBeer.getRatings():
+                fReviews.write(str(r).encode('utf8'))
+        #  TODO: Save the glasses
+        return theBeer
 
     def parseBrewery(self, brURL):
         """
@@ -597,22 +622,10 @@ class Parser(object):
                                      brewerPage.findChildren('tr',
                                      {'class': ''})):
                 beerURL = processBeerRow(b)
-                #  TODO: Get the rest of beer info from beer details and then build the beer object from there
                 if beerURL is not None:
-                    #  TODO: Here should be only the call to parseBeerDetails
-                    #  This code should be moved in there
                     theBeer = self.parseBeerDetails(beerURL)
-                    fBeers.write((u'{continent}, {country}, {location}'
-                                  u', {brewery}, {bId}, "{bName}", '
-                                  u'{bAbv}, {bAvg}, {bOverall}, '
-                                  u'{bStyleRt}, {bNRatings}\n').format(
-                        continent=continent, country=country,
-                        location=location, brewery=brewer,
-                        bId=beerData[1], bName=beerData[0], bAbv=beerData[3],
-                        bAvg=beerData[4], bOverall=beerData[5],
-                        bStyleRt=beerData[6],
-                        bNRatings=beerData[7]).encode('utf8'))
-        return beers
+                    fBeers.write(str(theBeer).encode('utf8'))
+        return self._currBrewery
 
     def parseLocation(self, locURL):
         """
@@ -698,7 +711,6 @@ class Parser(object):
                         bigCountry = ''
                     elif (i.name == u'a'):    #  Found a country, which may have subregions
                         country = bigCountry if len(bigCountry) else i.text
-                        #  TODO: Find a better solution for this "in" check. Maybe change the Continent dict's index.
                         if (country not in countrySet):
                             self._nCountries += 1
                             self._currCountry = Country(self._currCont, self._nCountries, country)

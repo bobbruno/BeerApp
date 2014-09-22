@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-from __builtin__ import str
 
-import bs4
-
 from Parser import Parser
 from Scraper import Scraper
 
