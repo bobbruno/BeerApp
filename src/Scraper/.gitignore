@@ -2,3 +2,11 @@
 /www.ratebeer.com/
 /ratebeerscraper.log
 /ratebeerscraper.err
+/Parser.pyc
+/beers.csv
+/breweries.csv
+/continents.csv
+/countries.csv
+/locations.csv
+/ratebeerscraper.pyc
+/ratings.csv

@@ -151,7 +151,7 @@ class Scraper(object):
         self.br.form["username"] = self.user
         self.br.form["pwd"] = self.password
         self.br.form.find_control(name="SaveInfo").items[0].selected = False
-        resp = self.br.submit()
+        self.br.submit()
         self.nGets -= 1
 
     def _getSitePure(self, site):
@@ -203,7 +203,7 @@ class Scraper(object):
         :rtype str
         '''
         if self.verbose:
-            print 'getting {}\n'.format(site).encode('utf8')
+            print u'getting {}\n'.format(site).encode('utf8')
 
         if self.useCache:
             parsedURL = urlparse(site)
