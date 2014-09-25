@@ -3,9 +3,11 @@ import cookielib
 import mechanize
 import os
 import random
+import re
 import socket
 import time
-from urlparse import urlparse
+from urlparse import urlparse, urlunparse
+
 import socks
 
 
@@ -160,6 +162,15 @@ class Scraper(object):
         :param str site: URL of the site that is to be downloaded
         :rtype str
         """
+        def urlEncodeNonAscii(b):
+            return re.sub('[\x80-\xFF]', lambda c: '%%%02x' % ord(c.group(0)), b)
+
+        def iriToUri(iri):
+            parts = urlparse(iri)
+            return urlunparse(
+                part.encode('idna') if parti == 1 else urlEncodeNonAscii(part.encode('utf-8'))
+                for parti, part in enumerate(parts)
+            )
 
         if (not self.nGets):
             self.beforeFirst()
@@ -170,22 +181,25 @@ class Scraper(object):
                 if self.clearCookies:
                     self.br._ua_handlers['_cookies'].cookiejar.clear_session_cookies()
                 if self.verbose:
-                    print('Calling open on {}').format(site).encode('utf8')
-                retVal = self.br.open(site)
+                    print(u'Calling open on {}').format(unicode(site)).encode('utf8')
+                try:
+                    retVal = self.br.open(site)
+                except socks.GeneralProxyError:
+                    retVal = self.br.open(iriToUri(site))
                 if self.sleepTime:
                     time.sleep(random.expovariate(1 / float(self.sleepTime)))
                 theHTML = retVal.read()
             except Exception, e:
                 tryCounter += 1
                 if self.verbose:
-                    print 'Getting {} did not work ({})'.format(site, str(e)).encode('utf8')
+                    print u'Getting {} did not work ({})'.format(unicode(site), unicode(e)).encode('utf8')
                     if (tryCounter >= self.maxTries // 2):
                         retVal = self.br.open('http://checkip.dyndns.com/')
                         theHTML = retVal.read()
-                        print 'Checking: {}'.format(theHTML).encode('utf8')
+                        print u'Checking: {}'.format(unicode(theHTML)).encode('utf8')
                 if (tryCounter >= self.maxTries):
                     if self.verbose:
-                        print 'Could not get {}: Error {}'.format(site, str(e)).encode('utf8')
+                        print u'Could not get {}: Error {}'.format(unicode(site), unicode(e)).encode('utf8')
                     raise e
                 else:
                     if self.sleepTime:
@@ -207,13 +221,13 @@ class Scraper(object):
 
         if self.useCache:
             parsedURL = urlparse(site)
-            path = parsedURL.path
-            if (path == ''):
-                path = 'INDEX'
-            if (path[0] == '/'):
+            path = unicode(parsedURL.path)
+            if (path == u''):
+                path = u'INDEX'
+            if (path[0] == u'/'):
                 path = path[1:]
             if (path[-1] == '/'):
-                path = '{}INDEX'.format(path)
+                path = u'{}INDEX'.format(path)
             dirPath = os.path.split(path)[0]
             cacheDir = os.path.join(self.cacheDir, parsedURL.netloc, dirPath)
             cacheFile = os.path.join(self.cacheDir, parsedURL.netloc, path)

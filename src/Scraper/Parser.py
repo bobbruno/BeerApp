@@ -28,25 +28,28 @@ class WrongBeer(Exception):
 
 class BeerGlass(object):
     def __init__(self, glassId, glassName):
-        self.glassId = glassId
-        self.glassName = glassName
+        self.id = glassId
+        self.name = glassName
 
 
 glassCollection = {}
 
 
 class City(object):
+    nCities = 0
     def __init__(self, city, cityName):
         """
         Initializes the city object.
         :param int city: Unique id of the city
         :param str cityName: name of the city
         """
-        self.id = city
+        self.id = City.nCities
+        City.nCities += 1
+        self.URL = city
         self.name = cityName
 
     def __str__(self, *args, **kwargs):
-        return u'{cId},"{cName}"'.format(cId=self.id, self.name)
+        return u'{cId},"{cName}"'.format(cId=self.id, cName=self.name)
 
 
 cityCollection = {}
@@ -64,7 +67,7 @@ class Beer(object):
                 6: style rating
                 7: # of ratings
     """
-    def __init__(self, beerId, beerName, brewer, URL, style, abv, IBU,
+    def __init__(self, beerId, beerName, brewer, URL, styleId, styleName, abv, IBU,
                  calories, glasses, avgRate, overPerf, stylePerf, nRatings,
                  city, availBottle='unknown',
                  seasonality=None, availTap='unknown', distribScope='unknown'):
@@ -74,7 +77,8 @@ class Beer(object):
         :param str beerName: Name of the beer
         :param Brewer brewer: Brewery that crafts the beer.
         :param str URL: URL for the beer details' landing page
-        :param int style:
+        :param int styleId: Id for the beer style
+        :param str styleName: Name of the beer style
         :param float abv:
         :param int IBU:
         :param int calories:
@@ -93,9 +97,11 @@ class Beer(object):
         self.name = beerName
         self.brewer = brewer
         self.URL = URL
-        self.style = style
-        if city.id not in cityCollection:
-            cityCollection[city.id] = city
+        self.styleId = styleId
+        self.styleName = styleName
+        if city is not None:
+            if city.id not in cityCollection:
+                cityCollection[city.id] = city
         self.city = city
         self.abv = abv
         self.IBU = IBU
@@ -124,11 +130,13 @@ class Beer(object):
         self.ratings = []
 
     def __str__(self):
-        return (u'{cont},{count},{loc},{brew},{bId},"{bName}","{bStyle}",{city},'
+        return (u'{cont},{count},{loc},{brew},{bId},"{bName}",{bStyle},"{bStyleName}",{city},'
                 u'{bAbv},{bIBU},{bNCals},{bavBot},{bavTap},{season},{bOvrlRt},{bAvg},'
-                u'{bStyleRt},{bNRatings}\n').format(
-                    cont=self.continentId, count=self.countryId,
-                    loc=self.locationId, brew=self.brewer,
+                u'{bStyleRt},{bNRatings}').format(
+                    cont=self.brewer.location.country.continent.id,
+                    count=self.brewer.location.country.id,
+                    bStyleName=self.styleName,
+                    loc=self.brewer.location.id, brew=self.brewer.id,
                     bId=self.id, bName=self.name, bAbv=self.abv,
                     bAvg=self.avgRate, bOvrlRt=self.overPerf,
                     bStyleRt=self.stylePerf, bIBU=self.IBU,
@@ -143,7 +151,7 @@ class Beer(object):
     def fileHead():
         return (u'Continent,Country,Location,Brewery,BeerId,BeerName,BeerStyle,CityId,CityName,'
                 u'ABV,IBU,NCals,AvailBottle,AvailTap,Seasonal,OveralllRating,BayesianAvg,'
-                u'StyleRating,NRatings\n')
+                u'StyleRating,NRatings')
 
     def getRatings(self):
         for r in self.ratings:
@@ -158,9 +166,9 @@ class Beer(object):
         Adds a rating object to the dictionary of ratings.
         :param UserRating rating: the rating.
         """
-        if rating.beerId is None:
+        if rating.beer is None:
             rating.beerId = self.id
-        elif rating.beerId != self.id:
+        elif rating.beer != self:
             raise WrongBeer(self.id, rating.beerId)
         self.ratings.append(rating)
         #  TODO: Check for uniqueness. Key would be userid, beerid, date
@@ -186,11 +194,11 @@ class Beer(object):
 
 
 class UserRating(object):
-    def __init__(self, beerId, userId, userName, compound, aroma, appearance,
+    def __init__(self, beer, userId, userName, compound, aroma, appearance,
                  taste, palate, overall, location, date, notes):
         """
         Creates a record of a user rating for a specific beer
-        :param int beerId: Id# of the beer
+        :param Beer beer: The Beer
         :param int userId: Id# of the user
         :param str userName: Text identifier of the user
         :param float final: Aggregate score for the user, between 0 and 5.
@@ -203,7 +211,7 @@ class UserRating(object):
         :param datetime.date date: date of the rating.
         :param str notes: text notes of the rating.
         """
-        self.beerId = beerId
+        self.beer = beer
         self.id = userId
         self.name = userName
         self.compound = compound
@@ -223,7 +231,7 @@ class UserRating(object):
         return (u'{beerId},{userId},{userName},{compound},'
                 u'{aroma},{appearance},{taste},{palate},'
                 u'{overall},"{location}","{date}","{notes}"').format(
-                    beerId=self.beerId, userId=self.id, userName=self.name,
+                    beerId=self.beer.id, userId=self.id, userName=self.name,
                     compound=self.compound, aroma=self.aroma, appearance=self.appearance,
                     taste=self.taste, palate=self.palate, overall=self.overall,
                     location=self.location, date=self.date,
@@ -252,7 +260,8 @@ class Brewery(object):
         self.name = breweryName
         self.bType = breweryType
         self.yEstb = yearEstablish
-        self.URL = bURL
+        #  TODO: Get this back to bURL. Did change to reuse cache.
+        self.URL = '/brewers/x/{}/'.format(breweryId)
         self.Beers = {}
 
     def __str__(self):
@@ -278,7 +287,7 @@ class Brewery(object):
 
     @staticmethod
     def fileHead():
-        return u'Continent,Country,Location,id,Brewery,Brewery Type,NBeers,EstYear\n'
+        return u'Continent,Country,Location,id,Brewery,Brewery Type,NBeers,EstYear'
 
 
 class Location(object):
@@ -328,7 +337,7 @@ class Location(object):
 
     @staticmethod
     def fileHead():
-        return (u'Continent,Country,id,Location\n')
+        return (u'Continent,Country,id,Location')
 
 
 class Country(object):
@@ -371,7 +380,7 @@ class Country(object):
 
     @staticmethod
     def fileHead():
-        return (u'Continent,id,Country\n')
+        return (u'Continent,id,Country')
 
 
 class Continent(object):
@@ -411,7 +420,7 @@ class Continent(object):
 
     @staticmethod
     def fileHead():
-        return (u'id,Continent\n')
+        return (u'id,Continent')
 
 
 class Parser(object):
@@ -436,6 +445,9 @@ class Parser(object):
         self._currBrewery = None
         self._currBeer = None
         self._nConts, self._nCountries, self._nLocs = -1, -1, -1
+        self._countriesToRate = set()
+        self._continentsToRate = set()
+        self._locationsToRate = set()
         if initFiles:
             self.initializeFiles()
 
@@ -444,15 +456,26 @@ class Parser(object):
         Initializes all the csv files, deleting whatever was there and creating just headers for all of them.
         """
         with open('{}/continents.csv'.format(self.fLocation), 'w') as fConts:
-            fConts.write(Continent.fileHead())
+            fConts.write(u'{}\n'.format(Continent.fileHead()))
         with open('{}/countries.csv'.format(self.fLocation), 'w') as fCountries:
-            fCountries.write(Country.fileHead())
+            fCountries.write(u'{}\n'.format(Country.fileHead()))
         with open('{}/locations.csv'.format(self.fLocation), 'w') as fLocs:
-            fLocs.write(Location.fileHead())
+            fLocs.write(u'{}\n'.format(Location.fileHead()))
         with open('{}/breweries.csv'.format(self.fLocation), 'w') as fBrewers:
-            fBrewers.write(Brewery.fileHead())
+            fBrewers.write(u'{}\n'.format(Brewery.fileHead()))
         with open('{}/beers.csv'.format(self.fLocation), 'w') as fBeers:
-            fBeers.write(Beer.fileHead())
+            fBeers.write(u'{}\n'.format(Beer.fileHead()))
+        with open('{}/ratings.csv'.format(self.fLocation), 'w') as fRatings:
+            fRatings.write(u'{}\n'.format(UserRating.fileHead()))
+
+    def limitLocations(self, locationSet):
+        self._locationsToRate = locationSet
+
+    def limitCountries(self, countrySet):
+        self._countriesToRate = countrySet
+
+    def limitContinents(self, continentSet):
+        self._continentsToRate = continentSet
 
     def parseBeerDetails(self, beerURL):
         """
@@ -469,14 +492,19 @@ class Parser(object):
             :rtype Beer
             """
             beerId = int(beerURL.split('/')[-2])
-            currTag = beerPage.findChild('div', id='container').contents[0].contents[0].contents[0].contents[1].contents[0]
-            beerName = currTag.contents[7].text
+            currTag = beerPage.findChild('div', id='container').contents[3].contents[0].contents[1].contents[2].contents[1]
+            beerName = currTag.contents[8].text.strip()
             currTag = beerPage.findChild('div', {'style': 'background-color: #036; width: 100px; height: 100px; border-radius: 130px;z-index: 5;text-align: center; '})
-            currTag2 = currTag.findChild('span', {'itemprop': 'average'})
-            overPerf = float(currTag2.text)
+            try:
+                currTag2 = currTag.contents[0].contents[2]    #  If there's no overall, this is AttributeError
+                overPerf = float(currTag2.text)    #  If overall is n/a, this is ValueError
+            except:
+                overPerf = None
             currTag = currTag.next_sibling    #  Move to the style score HTML
-            #  TODO: Deal with no value for this. Right now I'm avoiding anything with less than 10 ratings
-            stylePerf = float(currTag.text.replace('style', ''))
+            try:
+                stylePerf = float(currTag.text.replace('style', ''))
+            except ValueError:
+                stylePerf = None
             currTag = currTag.parent.parent.next_sibling
             currTag2 = currTag.contents[0].findChild('big')    #  Beer style HTML
             currTag2 = currTag2.next_sibling.next_sibling.next_sibling
@@ -485,8 +513,9 @@ class Parser(object):
             styleName = currTag2.text
             currTag2 = currTag2.find_next_sibling('a')    #  City HTML
             if currTag2 is not None:
-                #  FIXME: The city id is most certainly wrong (it's an URL)
-                city = City(int(currTag2.attrs['href']), currTag2.text)
+                city = City(currTag2.attrs['href'], currTag2.text)
+            else:
+                city = None
             currTag2 = currTag.contents[1]    #  Pouring glass HTML
             glasses = []
             for g in currTag2.findChildren('a'):
@@ -500,18 +529,47 @@ class Parser(object):
             currTag = currTag.parent.parent.next_sibling    #  Beer numeric data
             currTag2 = currTag.contents[0].contents[0].next_sibling    #  Number of Ratings
             nRatings = int(currTag2.text)
-            currTag2 = currTag2.next_sibling.next_sibling    #  weighted Average
-            avgRate = float(currTag2.contents[1].text)
-            currTag2 = currTag2.next_sibling.next_sibling    #  Seasonality
-            seasonality = currTag2.text
-            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  IBU
-            IBU = int(currTag2.text)
-            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  Calories
-            calories = int(currTag2.text)
-            currTag2 = currTag2.next_sibling.next_sibling.next_sibling.next_sibling    #  abv
-            abv = float(currTag2.text[:-2])
+            #  Check for real average (Mean) and skip it if it's there
+            currTag2 = currTag2.next_sibling.next_sibling
+            if currTag2.contents[0] == 'MEAN: ':
+                currTag2 = currTag2.next_sibling.next_sibling
+            avgRate = float(currTag2.contents[1].text)    #  weighted Average
+            #  Deal with the fact that some of the following information may be missing
+            currTag2 = currTag2.next_sibling    #  Check for Seasonality
+            if (currTag2.strip() == 'SEASONAL:'):
+                currTag2 = currTag2.next_sibling
+                seasonality = currTag2.text
+            else:
+                seasonality = None
+                while (type(currTag2) == bs4.NavigableString or
+                       currTag2.name != 'abbr'):
+                    currTag2 = currTag2.next_sibling
+            if currTag2.text == 'IBU':    #  Check for IBU
+                currTag2 = currTag2.next_sibling.next_sibling
+                IBU = int(currTag2.text)
+                while (type(currTag2) == bs4.NavigableString or
+                       currTag2.name != 'abbr'):
+                    currTag2 = currTag2.next_sibling
+            else:
+                IBU = None
+            if currTag2.text == 'EST. CALORIES':    #  Check for Calories
+                currTag2 = currTag2.next_sibling.next_sibling
+                calories = int(currTag2.text)
+                while (type(currTag2) == bs4.NavigableString or
+                       currTag2.name != 'abbr'):
+                    currTag2 = currTag2.next_sibling
+            else:
+                calories = None
+            if currTag2.text == 'ABV':    #  Check for abv
+                currTag2 = currTag2.next_sibling.next_sibling
+                try:
+                    abv = float(currTag2.text[:-1])
+                except ValueError:
+                    abv = None
+            else:
+                abv = None
             theBeer = Beer(beerId, beerName, self._currBrewery, beerURL, style,
-                           abv, IBU, calories, glasses, avgRate, overPerf,
+                           styleName, abv, IBU, calories, glasses, avgRate, overPerf,
                            stylePerf, nRatings, city, availBottle, seasonality,
                            availTap, distrScope)
             return theBeer
@@ -522,7 +580,11 @@ class Parser(object):
             :param Tag beerPg: the beer page itself
             """
             currTag = beerPg.body.findChild('td', {'id': 'tdL'}).next_sibling
-            currTag = currTag.contents[0].contents[19]
+            currTag = currTag.contents[0].findChild('table',
+                                                    {'cellpadding': '0',
+                                                     'cellspacing': '0',
+                                                     'border': '0',
+                                                     'style': 'padding: 10px;'})
             currTag2 = currTag.contents[0].contents[0].contents[0]
             while currTag2 is not None:
                 if (currTag2.name == 'table'):    #  Skipping ad blocks in the middle of the table
@@ -536,15 +598,15 @@ class Parser(object):
                         continue
                     texto = i.text.strip()
                     if (texto == "AROMA"):
-                        aroma = i.next_sibling.text.split('/')[0]
+                        aroma = int(i.next_sibling.text.split('/')[0])
                     elif (texto == "APPEARANCE"):
-                        appearance = i.next_sibling.text.split('/')[0]
+                        appearance = int(i.next_sibling.text.split('/')[0])
                     elif (texto == "TASTE"):
-                        taste = i.next_sibling.text.split('/')[0]
+                        taste = int(i.next_sibling.text.split('/')[0])
                     elif (texto == "PALATE"):
-                        palate = i.next_sibling.text.split('/')[0]
+                        palate = int(i.next_sibling.text.split('/')[0])
                     elif (texto == "OVERALL"):
-                        overall = i.next_sibling.text.split('/')[0]
+                        overall = int(i.next_sibling.text.split('/')[0])
                 currTag2 = currTag2.next_sibling
                 currTag3 = currTag2.contents[0]
                 userId = currTag3.attrs['href'].split('/')[-2]    #  User id (I may need it for training)
@@ -562,25 +624,27 @@ class Parser(object):
                 #  Go to the next line, if there's one
                 currTag2 = currTag2.next_sibling.next_sibling
 
-        beerHTML = self.scraper.getSite(beerURL)
+        beerHTML = self.scraper.getSite(u'http://www.ratebeer.com{}'.format(unicode(beerURL)))
         beerPage = bs4.BeautifulSoup(beerHTML)
         #  Get beer header information
-        theBeer = getHeader(beerPage.html.body)
+        try:
+            theBeer = getHeader(beerPage.html.body)
+        except:
+            return None
         self._currBeer = theBeer
-        #  TODO: I should limit the call to getRatings to a list of interesting countries only
-        getRatings(beerPage)
-        #  Double-quote ratings text and replace whatever double quotes are inside with single quotes
-
-        #  Check if there are more rating pages
-        #  //*[@id="container"]/span/table/tbody/tr[2]/td[2]/div
-        currTag = beerPage.html.body.findChild('div', id='container').contents[0].contents[0].contents[1].contents[1].contents[0]
-        for currTag2 in currTag.findChildren('a', recursive=False):
-            beerHTML = self.scraper.getSite(currTag2.attrs['href'])
-            beerPg2 = bs4.BeautifulSoup(beerHTML)
-            getRatings(beerPg2)
-        with open('{}/ratings.csv'.format(self.fLocation), 'a') as fReviews:
-            for r in theBeer.getRatings():
-                fReviews.write(str(r).encode('utf8'))
+        if (not len(self._countriesToRate) or
+                self._currCountry.name in self._countriesToRate):
+            getRatings(beerPage)
+            #  Check if there are more rating pages
+            #  //*[@id="container"]/span/table/tbody/tr[2]/td[2]/div
+            currTag = beerPage.html.body.findChild('div', id='container').contents[3].contents[0].contents[2].contents[1].contents[0]
+            for currTag2 in currTag.findChildren('a', recursive=False):
+                beerHTML = self.scraper.getSite(u'http://www.ratebeer.com{}'.format(unicode(currTag2.attrs['href'])))
+                beerPg2 = bs4.BeautifulSoup(beerHTML)
+                getRatings(beerPg2)
+            with open('{}/ratings.csv'.format(self.fLocation), 'a') as fReviews:
+                for r in theBeer.getRatings():
+                    fReviews.write(u'{}\n'.format(unicode(r)).encode('utf8'))
         #  TODO: Save the glasses
         return theBeer
 
@@ -599,17 +663,25 @@ class Parser(object):
             :param bs4.Tag tag: tag pointing to the line of data about the beer
             :rtype str
             """
+            #  //*[@id="container"]/table/tbody/tr/td[2]/span/table[2]/tbody/tr[5]/td[2]/span
             if tag.findChild('span', {'class': 'rip'}) is not None:    #  Skip retired beers
                 return None
-            if (robustConv(tag.contents[7].text) < 10):    #  Skip beers with too few ratings - not enough data
+            try:
+                if (len(tag.contents) < 7 or
+                        robustConv(tag.contents[3].text) is None or    #  Skip beers with no avg/5 - not enough data
+                        robustConv(tag.contents[4].text) is None or    #  Skip beers with no overall - not enough data
+                        robustConv(tag.contents[6].text) < 10):    #  Skip beers with too few ratings - not enough data
+                    return None
+            except:
+                print(tag.text)
                 return None
             try:
-                beerURL = tag.contents[0].contents[1].attrs['href']
+                beerURL = unicode(tag.contents[0].contents[1].attrs['href'].decode('latin-1'))
             except:
                 return None
             return beerURL
 
-        response = self.scraper.getSite(brURL)
+        response = self.scraper.getSite('http://www.ratebeer.com{}'.format(brURL))
         soup = bs4.BeautifulSoup(response).html.body
         try:
             brewerPage = soup.findChild('td', {'width': '85%'}).findChild('span', {'class': 'beerfoot'}).findChild('table', {'class': 'maintable nohover'})
@@ -617,6 +689,7 @@ class Parser(object):
             return None
 
         with open('{}/beers.csv'.format(self.fLocation), 'a') as fBeers:
+            sleepTime, self.scraper.sleepTime = self.scraper.sleepTime, 0
             for b in itertools.chain(brewerPage.findChildren('tr',
                                      {'class': 'dataTableRowAlternate'}),
                                      brewerPage.findChildren('tr',
@@ -624,7 +697,10 @@ class Parser(object):
                 beerURL = processBeerRow(b)
                 if beerURL is not None:
                     theBeer = self.parseBeerDetails(beerURL)
-                    fBeers.write(str(theBeer).encode('utf8'))
+                    if theBeer is not None:
+                        fBeers.write(u'{}\n'.format(unicode(theBeer)).encode('utf8'))
+                        self._currBrewery.addBeer(theBeer)
+            self.scraper.sleepTime = sleepTime
         return self._currBrewery
 
     def parseLocation(self, locURL):
@@ -650,12 +726,12 @@ class Parser(object):
             brewery = brewerHTML.text
             if self.verbose:
                 print u'\t\t\t Processing {}'.format(brewery).encode('utf8')
-            brType = frCol.findNextSibling()
-            brNBeer = brType.findNextSibling()
+            brType = frCol.next_sibling
+            brNBeer = brType.next_sibling
             brEstDate = int(brNBeer.findNextSibling().findNextSibling().text)    #  @IgnorePep8
             theBrewery = Brewery(self._currLocation,
                                  int(brewerHTML.attrs['href'][9:].split('/')[1]),
-                                 brewery, brType, int(brEstDate),
+                                 brewery, brType.text, int(brEstDate),
                                  brewerHTML.attrs['href'])
             if self.verbose:
                 print self._currCont.id, self._currCountry.id, self._currLocation.id, \
@@ -667,22 +743,24 @@ class Parser(object):
         response = self.scraper.getSite(locURL)
         soup = bs4.BeautifulSoup(response).html.body
         self._nLocs += 1
-        locName = soup.findChild('div', id='brewerCover').contents[0].text.split()[0]
+        locName = soup.findChild('div', id='brewerCover').contents[1].text.split('  ')[0]
         self._currLocation = Location(self._currCountry, self._nLocs, locName, locURL)
-        if self.verbose:
-            print u'\t\tBreweries from Country {}, Location {}'.format(
-                self._currCountry.name, self._currLocation.name).encode('utf8')
-        locPage = soup.findChild(id='brewerTable').findChild('tbody')
-        with open('{}/breweries.csv'.format(self.fLocation), 'a') as fBrewers:
-            for bTabLin in locPage.childGenerator():
-                #  Process the brewery table row
-                self._currBrewery = processLocRow(bTabLin)
-                #  Now let's go to the brewer's page and process the beers
-                theBrewery = self.parseBrewery(self._currBrewery.URL)
-                if theBrewery is not None:
-                    self._currLocation.addBrewery(theBrewery)
-                    fBrewers.write(str(theBrewery).encode('utf8'))
-                    self._currBrewery = theBrewery
+        if (not len(self._locationsToRate) or
+                locName in self._locationsToRate):
+            if self.verbose:
+                print u'\t\tBreweries from Country {}, Location {}'.format(
+                    self._currCountry.name, self._currLocation.name).encode('utf8')
+            locPage = soup.findChild(id='brewerTable').findChild('tbody')
+            with open('{}/breweries.csv'.format(self.fLocation), 'a') as fBrewers:
+                for bTabLin in locPage.childGenerator():
+                    #  Process the brewery table row
+                    self._currBrewery = processLocRow(bTabLin)
+                    #  Now let's go to the brewer's page and process the beers
+                    theBrewery = self.parseBrewery(self._currBrewery.URL)
+                    if theBrewery is not None:
+                        self._currLocation.addBrewery(theBrewery)
+                        fBrewers.write(u'{}\n'.format(unicode(theBrewery)).encode('utf8'))
+                        self._currBrewery = theBrewery
         return self._currLocation
 
     def parseContinents(self, initPage):
@@ -706,7 +784,7 @@ class Parser(object):
                         self._currCont = Continent(self._nConts, i.text)
                         if self.verbose:
                             print u'Breweries from {}'.format(self._currCont.name).encode('utf8')
-                        fConts.write(str(self._currCont).encode('utf8'))
+                        fConts.write(u'{}\n'.format(unicode(self._currCont)).encode('utf8'))
                         self.beerContinents[self._currCont.id] = self._currCont
                         bigCountry = ''
                     elif (i.name == u'a'):    #  Found a country, which may have subregions
@@ -718,11 +796,13 @@ class Parser(object):
                             countrySet.add(country)
                             if self.verbose:
                                 print u'\tBreweries from country {}'.format(self._currCountry.name).encode('utf8')
-                            fCountries.write(str(self._currCountry).encode('utf8'))
-                        locPage = i.attrs['href']
-                        currLoc = self.parseLocations('http://www.ratebeer.com{}'.format(locPage))
-                        self._currCountry.addLocation(currLoc)
-                        fLocs.write(str(currLoc).encode('utf8'))
+                            fCountries.write(u'{}\n'.format(unicode(self._currCountry)).encode('utf8'))
+                        if (not len(self._continentsToRate) or
+                                self._currCont.name in self._continentsToRate):
+                            locPage = i.attrs['href']
+                            currLoc = self.parseLocation('http://www.ratebeer.com{}'.format(locPage))
+                            self._currCountry.addLocation(currLoc)
+                            fLocs.write(u'{}\n'.format(unicode(currLoc)).encode('utf8'))
                 elif (type(i) == bs4.element.NavigableString and
                       len(i.strip()) > 0 and len(i.strip()) < 40):
                     bigCountry = i.strip()

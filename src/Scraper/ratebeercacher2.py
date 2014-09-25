@@ -18,11 +18,16 @@ uaS = ['Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) C
        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.67 Safari/537.36']
 
 
-beerScraper = Scraper(sleepTime=3, cacheDir=SCRAPER_CACHE_DIR, verbose=True, uaString=uaS[1])
-beerParser = Parser(scraper=beerScraper, loc=SCRAPER_CACHE_DIR)
+beerScraper = Scraper(sleepTime=3, cacheDir=SCRAPER_CACHE_DIR, verbose=True, uaString=uaS[3])
+beerParser = Parser(scraper=beerScraper, loc=SCRAPER_CACHE_DIR + 'dummy2/')
 beerParser.limitCountries(set([u'England', u'Ireland', u'Other United Kingdom', u'Belgium', u'Germany', u'United States']))
+beerParser.limitContinents(set([u'North America']))
+beerParser.limitLocations(set([u'New Jersey', u'New Mexico', u'New York', u'North Carolina', u'North Dakota',
+                               u'Ohio', u'Oklahoma', u'Oregon', u'Pennsylvania', u'Rhode Island', u'South Dakota',
+                               u'Tennessee', u'Texas', u'Utah', u'Vermont', u'Virginia', u'Washington', u'Washington DC',
+                               u'West Virginia', u'Wisconsin', u'Wyoming']))
 
-beerScraper.login(accounts[0][0], accounts[0][2],
+beerScraper.login(accounts[2][0], accounts[2][2],
                   'http://www.ratebeer.com/login.asp',
                   'signin', 'http://www.ratebeer.com')
 
