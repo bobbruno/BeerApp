@@ -104,7 +104,8 @@ def main(argv=None):
         Ratings = dBRating(conn, Beers, opts.truncate)
 
         #  Load continents
-        print 'Loading continents...'
+        if opts.verbose:
+            print 'Loading continents...'
         with open(opts.inFile + 'continents.csv', 'r') as fCont:
             reader = csv.reader(fCont, quoting=csv.QUOTE_ALL, quotechar='"', skipinitialspace=True)
             try:
@@ -116,10 +117,12 @@ def main(argv=None):
                     continue
                 theCont = Continent(int(row[0]), row[1])
                 Conts[theCont.id] = theCont
-        print '{} records loaded.\n'.format(len(Conts))
+        if opts.verbose:
+            print '{} records loaded.\n'.format(len(Conts))
 
         #  Load countries
-        print 'Loading countries...'
+        if opts.verbose:
+            print 'Loading countries...'
         with open(opts.inFile + 'countries.csv', 'r') as fCont:
             reader = csv.reader(fCont, quoting=csv.QUOTE_ALL, quotechar='"', skipinitialspace=True)
             try:
@@ -131,10 +134,12 @@ def main(argv=None):
                     continue
                 theCountry = Country(Conts[int(row[0])], int(row[1]), row[2])
                 Countries[theCountry.id] = theCountry
-        print '{} records loaded.\n'.format(len(Countries))
+        if opts.verbose:
+            print '{} records loaded.\n'.format(len(Countries))
 
         #  Load Locations
-        print 'Loading locations...'
+        if opts.verbose:
+            print 'Loading locations...'
         with open(opts.inFile + 'locations.csv', 'r') as fLoc:
             reader = csv.reader(fLoc, quoting=csv.QUOTE_ALL, quotechar='"', skipinitialspace=True)
             try:
@@ -146,10 +151,12 @@ def main(argv=None):
                     continue
                 theLocation = Location(Countries[int(row[1])], int(row[2]), row[3], '')
                 Locations[theLocation.id] = theLocation
-        print '{} records loaded.\n'.format(len(Locations))
+        if opts.verbose:
+            print '{} records loaded.\n'.format(len(Locations))
 
         #  Load Breweries
-        print 'Loading breweries...'
+        if opts.verbose:
+            print 'Loading breweries...'
         with open(opts.inFile + 'breweries.csv', 'r') as fLoc:
             reader = csv.reader(fLoc, quoting=csv.QUOTE_ALL, quotechar='"', skipinitialspace=True)
             try:
@@ -161,15 +168,18 @@ def main(argv=None):
                     continue
                 theBrewery = Brewery(Locations[int(row[2])], int(row[3]), row[4], row[5], int(row[6]), int(row[7]), '')
                 Breweries[theBrewery.id] = theBrewery
-                if not i % INTERV_MSG and i:
-                    print "{} records saved...".format(i)
+                if opts.verbose >= 2:
+                    if not i % INTERV_MSG and i:
+                        print "{} records saved...".format(i)
             else:
                 conn.commit()
-                print '{} records loaded.\n'.format(i)
+                if opts.verbose:
+                    print '{} records loaded.\n'.format(i)
 
 
         #  Load Beers
-        print 'Loading beers...'
+        if opts.verbose:
+            print 'Loading beers...'
         with open(opts.inFile + 'beers.csv', 'r') as fLoc:
             reader = csv.reader(fLoc, quoting=csv.QUOTE_ALL, quotechar='"', skipinitialspace=True)
             try:
@@ -190,14 +200,17 @@ def main(argv=None):
                 except Exception as e:
                     print row
                     print e
-                if not i % INTERV_MSG and i:
-                    print "{} records saved...".format(i)
+                if opts.verbose >= 2:
+                    if not i % INTERV_MSG and i:
+                        print "{} records saved...".format(i)
             else:
                 conn.commit()
-                print '{} records loaded.\n'.format(i)
+                if opts.verbose:
+                    print '{} records loaded.\n'.format(i)
 
         #  Load Ratings
-        print 'Loading ratings...'
+        if opts.verbose:
+            print 'Loading ratings...'
         with open(opts.inFile + 'ratings.csv', 'r') as fLoc:
             reader = csv.reader(fLoc, quoting=csv.QUOTE_ALL, quotechar='"', skipinitialspace=True)
             try:
@@ -217,11 +230,13 @@ def main(argv=None):
                     print row
                     print e
                     raise
-                if not i % INTERV_MSG and i:
-                    print "{} records saved...".format(i)
+                if opts.verbose >= 2:
+                    if not i % INTERV_MSG and i:
+                        print "{} records saved...".format(i)
             else:
                 conn.commit()
-                print '{} records loaded.'.format(i)
+                if opts.verbose:
+                    print '{} records loaded.'.format(i)
 
     except Exception, e:
         indent = len(program_name) * " "
