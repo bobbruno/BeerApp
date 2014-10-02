@@ -1,0 +1,711 @@
+Mon Sep 29 02:28:26 2014    Modeler.DBLoad_profile.txt
+
+         1754813716 function calls (1754482728 primitive calls) in 18412.544 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000 18412.724 18412.724 <string>:1(<module>)
+        1    0.005    0.005 18412.724 18412.724 Parser.py:857(parseContinents)
+       93    0.034    0.000 18412.618  197.985 Parser.py:796(parseLocation)
+     1565    0.378    0.000 18406.956   11.762 Parser.py:740(parseBrewery)
+     9634    3.502    0.000 18107.395    1.880 Parser.py:559(parseBeerDetails)
+    39395    1.741    0.000 15495.884    0.393 Scraper.py:237(getSite)
+6565/6563    0.132    0.000 15449.606    2.354 Scraper.py:183(_getSitePure)
+13187/13186    0.055    0.000 15435.009    1.171 _mechanize.py:201(open)
+13187/13186    0.226    0.000 15434.954    1.171 _mechanize.py:205(_mech_open)
+13187/13186    0.616    0.000 15430.096    1.170 _opener.py:170(open)
+  1704158 15391.345    0.009 15391.345    0.009 {method 'recv' of '_socket.socket' objects}
+26417/26415    0.059    0.000 12607.981    0.477 _urllib2_fork.py:324(_call_chain)
+    13187    0.090    0.000 12607.577    0.956 _urllib2_fork.py:336(_open)
+    13187    0.054    0.000 12607.404    0.956 _urllib2_fork.py:1141(http_open)
+    13187    0.375    0.000 12607.350    0.956 _urllib2_fork.py:1069(do_open)
+     6600    0.125    0.000 8534.993    1.293 httplib.py:1009(getresponse)
+     6600    0.198    0.000 8534.599    1.293 httplib.py:402(begin)
+    72427    5.537    0.000 8532.623    0.118 socket.py:406(readline)
+     6600    0.144    0.000 8522.723    1.291 httplib.py:363(_read_status)
+    13187    0.037    0.000 4071.444    0.309 httplib.py:971(request)
+    13187    0.162    0.000 4071.407    0.309 httplib.py:992(_send_request)
+    13187    0.029    0.000 4070.952    0.309 httplib.py:956(endheaders)
+    13187    0.066    0.000 4070.922    0.309 httplib.py:814(_send_output)
+    13187    0.088    0.000 4070.807    0.309 httplib.py:787(send)
+    13187    0.056    0.000 4070.402    0.309 httplib.py:769(connect)
+    13187    0.066    0.000 4070.346    0.309 Scraper.py:20(_createConnection)
+    13187    0.164    0.000 4069.991    0.309 socks.py:353(connect)
+     6601    0.331    0.000 4069.441    0.616 socks.py:163(__negotiatesocks5)
+    26402    0.186    0.000 4068.735    0.154 socks.py:134(__recvall)
+20015/6708    0.965    0.000 2800.389    0.417 socket.py:336(read)
+    19915    0.207    0.000 2800.099    0.141 httplib.py:534(read)
+     6598    0.096    0.000 2785.435    0.422 _gzip.py:97(http_response)
+     6541    0.119    0.000 2785.118    0.426 _gzip.py:71(__init__)
+    39394    1.050    0.000 2209.361    0.056 __init__.py:83(__init__)
+    39394    0.198    0.000 2204.312    0.056 __init__.py:181(_feed)
+    39394    0.161    0.000 2202.703    0.056 _lxml.py:193(feed)
+    39394  157.272    0.004 1445.618    0.037 {method 'close' of 'lxml.etree._FeedParser' objects}
+ 22639699  275.962    0.000 1292.301    0.000 _lxml.py:97(start)
+ 22639699  123.452    0.000  930.284    0.000 __init__.py:282(handle_starttag)
+    39394  107.974    0.003  756.924    0.019 {method 'feed' of 'lxml.etree._FeedParser' objects}
+   326654   39.457    0.000  587.272    0.002 element.py:473(_find_all)
+   313894    1.086    0.000  587.159    0.002 element.py:1152(find_all)
+ 22639696   76.762    0.000  570.290    0.000 _lxml.py:146(end)
+ 22679093  164.670    0.000  562.317    0.000 element.py:732(__init__)
+ 25748722   50.872    0.000  507.552    0.000 element.py:1512(search)
+   291508    1.429    0.000  494.701    0.002 element.py:1141(find)
+ 68816497  155.832    0.000  445.825    0.000 __init__.py:230(endData)
+    37728   20.544    0.001  440.347    0.012 Parser.py:656(getRatings)
+ 13955439   52.265    0.000  391.992    0.000 element.py:1471(search_tag)
+ 22639699  288.719    0.000  322.649    0.000 __init__.py:145(_replace_cdata_list_attribute_values)
+15098088/14992311   51.168    0.000  257.264    0.000 element.py:1538(_matches)
+ 22639696   31.783    0.000  235.170    0.000 __init__.py:309(handle_endtag)
+226000809/226000808   79.715    0.000  197.599    0.000 {isinstance}
+ 22639696  123.898    0.000  196.318    0.000 __init__.py:258(_popToTag)
+ 15881622   42.310    0.000  127.283    0.000 element.py:1435(_normalize_search_value)
+ 28985579   75.031    0.000  117.884    0.000 abc.py:128(__instancecheck__)
+ 20827796  115.741    0.000  115.741    0.000 {method 'translate' of 'unicode' objects}
+ 20867190   48.747    0.000  107.345    0.000 __init__.py:248(object_was_parsed)
+ 43546283   95.952    0.000   95.952    0.000 element.py:188(setup)
+ 52726858   66.431    0.000   94.711    0.000 {hasattr}
+   118958    0.718    0.000   80.898    0.001 element.py:924(__getattr__)
+ 22679093   53.864    0.000   68.067    0.000 __init__.py:223(pushTag)
+  4550764    9.456    0.000   60.268    0.000 element.py:833(get_text)
+ 20867190   27.269    0.000   59.113    0.000 element.py:642(__new__)
+     9633    0.939    0.000   56.085    0.006 Parser.py:566(getHeader)
+ 35760730   23.637    0.000   54.193    0.000 element.py:1177(descendants)
+ 15224474   19.862    0.000   49.743    0.000 {method 'decode' of 'str' objects}
+ 25147440   23.524    0.000   49.254    0.000 _lxml.py:165(data)
+  9289242    8.362    0.000   47.091    0.000 element.py:808(_all_strings)
+    50613    0.511    0.000   43.979    0.001 Parser.py:748(processBeerRow)
+ 22639699   30.244    0.000   36.132    0.000 __init__.py:216(popTag)
+ 57931769   36.115    0.000   36.115    0.000 _weakrefset.py:70(__contains__)
+121696403/121696383   32.405    0.000   32.405    0.000 {len}
+    32832    0.078    0.000   29.959    0.001 codecs.py:674(readlines)
+    32832    0.114    0.000   29.881    0.001 codecs.py:573(readlines)
+ 15201714   11.003    0.000   29.880    0.000 utf_8.py:15(decode)
+ 45325420   29.744    0.000   29.744    0.000 {range}
+  4788752    7.109    0.000   29.703    0.000 element.py:258(_last_descendant)
+ 68278247   28.757    0.000   28.757    0.000 _lxml.py:55(_getNsTag)
+  7662398   28.756    0.000   28.756    0.000 _abcoll.py:389(keys)
+ 16579857   28.166    0.000   28.166    0.000 element.py:660(__getattr__)
+ 25556749   17.293    0.000   26.110    0.000 __init__.py:314(handle_data)
+ 25834817   10.551    0.000   25.771    0.000 {next}
+    32832    0.458    0.000   24.587    0.001 codecs.py:424(read)
+ 93133699   23.529    0.000   23.529    0.000 {method 'append' of 'list' objects}
+ 15267378   23.279    0.000   23.279    0.000 {_codecs.utf_8_decode}
+ 21128322   22.811    0.000   22.811    0.000 {built-in method __new__ of type object at 0x91f8e0}
+     6598    0.270    0.000   21.739    0.003 _http.py:191(http_response)
+     6597    0.140    0.000   20.446    0.003 _http.py:166(parse_head)
+    65664   19.727    0.000   19.727    0.000 {method 'read' of 'file' objects}
+    32884    0.379    0.000   19.365    0.001 _response.py:176(read)
+        1    0.000    0.000   19.363   19.363 Scraper.py:165(beforeFirst)
+   409309    1.116    0.000   18.415    0.000 _lxml.py:173(comment)
+ 73243289   16.831    0.000   16.831    0.000 element.py:905(__nonzero__)
+   331793    2.070    0.000   15.564    0.000 {built-in method strptime}
+ 22679093   15.537    0.000   15.537    0.000 __init__.py:101(can_be_empty_element)
+    26308    0.064    0.000   14.769    0.001 _sgmllib_copy.py:101(feed)
+    26309    2.053    0.000   14.705    0.001 _sgmllib_copy.py:122(goahead)
+ 25411392   14.223    0.000   14.223    0.000 {method 'join' of 'unicode' objects}
+   331793    6.830    0.000   13.492    0.000 _strptime.py:295(_strptime)
+ 48295168   12.981    0.000   12.981    0.000 {method 'get' of 'dict' objects}
+  2234684   12.761    0.000   12.761    0.000 {method 'split' of '_sre.SRE_Pattern' objects}
+ 22679093   11.334    0.000   12.616    0.000 __init__.py:253(set_up_substitutions)
+     6598    0.088    0.000   11.586    0.002 mimetools.py:24(__init__)
+ 23822762   11.450    0.000   11.450    0.000 {method 'items' of 'dict' objects}
+     6598    0.036    0.000   11.335    0.002 rfc822.py:88(__init__)
+     6598    0.723    0.000   11.299    0.002 httplib.py:234(readheaders)
+   185453    3.955    0.000    9.669    0.000 _sgmllib_copy.py:244(parse_starttag)
+   307398    2.806    0.000    9.632    0.000 element.py:1408(__init__)
+    13187    5.366    0.000    9.194    0.001 _opener.py:71(_maybe_reindex_handlers)
+ 24320745    8.612    0.000    8.612    0.000 {method 'lower' of 'str' objects}
+   331763    1.349    0.000    8.587    0.000 Parser.py:274(__str__)
+819213/809588    8.494    0.000    8.516    0.000 {method 'format' of 'unicode' objects}
+30139501/30113335    7.810    0.000    7.830    0.000 {getattr}
+ 22639699    6.424    0.000    6.424    0.000 _lxml.py:137(_prefix_for_namespace)
+ 22718487    5.939    0.000    5.939    0.000 {method 'pop' of 'list' objects}
+        1    0.000    0.000    5.587    5.587 _mechanize.py:533(submit)
+    32832    5.180    0.000    5.180    0.000 {method 'splitlines' of 'unicode' objects}
+    39394    0.293    0.000    5.029    0.000 _lxml.py:168(doctype)
+  7438079    4.490    0.000    4.490    0.000 {method 'intersection' of 'set' objects}
+6577/6576    0.053    0.000    4.191    0.001 _http.py:421(http_response)
+       22    0.000    0.000    3.970    0.180 _opener.py:208(error)
+       43    0.000    0.000    3.969    0.092 {apply}
+        1    0.000    0.000    3.968    3.968 _urllib2_fork.py:535(http_error_302)
+  1472377    3.483    0.000    3.483    0.000 {method 'match' of '_sre.SRE_Pattern' objects}
+     6597    0.065    0.000    3.336    0.001 _mechanize.py:293(_set_response)
+   349781    3.271    0.000    3.271    0.000 {method 'write' of 'file' objects}
+   331795    0.449    0.000    3.261    0.000 _strptime.py:27(_getlang)
+     6562    0.025    0.000    3.077    0.000 codecs.py:686(write)
+     6562    0.034    0.000    3.052    0.000 codecs.py:347(write)
+ 15881622    2.933    0.000    2.933    0.000 {callable}
+     6541    0.260    0.000    2.880    0.000 _gzip.py:18(feed)
+   331795    0.575    0.000    2.812    0.000 locale.py:546(getlocale)
+     6597    0.131    0.000    2.656    0.000 _html.py:601(set_response)
+   184073    1.280    0.000    2.564    0.000 _sgmllib_copy.py:337(finish_starttag)
+     6541    2.557    0.000    2.557    0.000 {built-in method decompress}
+    13187    0.031    0.000    2.552    0.000 _urllib2_fork.py:1187(http_request)
+  2664070    2.527    0.000    2.527    0.000 {method 'split' of 'unicode' objects}
+    13187    0.171    0.000    2.521    0.000 cookielib.py:1312(add_cookie_header)
+    39395    0.184    0.000    2.488    0.000 genericpath.py:26(isfile)
+    50530    2.418    0.000    2.418    0.000 {posix.stat}
+    96982    0.506    0.000    2.219    0.000 urlparse.py:137(urlparse)
+    39394    0.387    0.000    2.186    0.000 codecs.py:838(open)
+79129/39566    0.185    0.000    2.122    0.000 copy.py:66(copy)
+  1858306    1.506    0.000    2.091    0.000 element.py:877(get)
+79021/39563    0.281    0.000    2.008    0.000 copy.py:123(_copy_inst)
+   331795    0.444    0.000    2.005    0.000 locale.py:447(_parse_localename)
+    39394    0.374    0.000    1.949    0.000 inspect.py:804(getargspec)
+    39563    0.196    0.000    1.909    0.000 _response.py:265(__copy__)
+  1796107    1.772    0.000    1.772    0.000 {method 'write' of 'cStringIO.StringO' objects}
+   749805    1.626    0.000    1.626    0.000 {method 'search' of '_sre.SRE_Pattern' objects}
+   224180    1.596    0.000    1.596    0.000 {dir}
+   110160    0.796    0.000    1.590    0.000 urlparse.py:168(urlsplit)
+    50608    1.580    0.000    1.580    0.000 {open}
+   331795    1.048    0.000    1.560    0.000 locale.py:363(normalize)
+    13187    0.041    0.000    1.520    0.000 cookielib.py:1246(_cookies_for_request)
+    13186    0.129    0.000    1.468    0.000 cookielib.py:1228(_cookies_for_domain)
+  4803448    1.445    0.000    1.445    0.000 {method 'find' of 'str' objects}
+    26374    0.111    0.000    1.414    0.000 _opener.py:155(_request)
+    92187    0.557    0.000    1.381    0.000 _sgmllib_copy.py:317(parse_endtag)
+    39394    1.144    0.000    1.352    0.000 inspect.py:744(getargs)
+    12760    0.047    0.000    1.352    0.000 element.py:387(find_next_sibling)
+    12760    0.035    0.000    1.304    0.000 element.py:466(_find_one)
+   307398    1.280    0.000    1.280    0.000 element.py:1596(__init__)
+    12760    0.051    0.000    1.270    0.000 element.py:394(find_next_siblings)
+     6599    0.055    0.000    1.260    0.000 _html.py:535(__getattr__)
+435645/415887    1.069    0.000    1.225    0.000 {method 'encode' of 'unicode' objects}
+    39394    0.301    0.000    1.125    0.000 __init__.py:191(reset)
+    39563    0.171    0.000    1.053    0.000 _response.py:161(__copy__)
+    39394    0.658    0.000    1.034    0.000 _lxml.py:42(__init__)
+    32992    0.191    0.000    1.003    0.000 rfc822.py:295(getheaders)
+    46182    0.182    0.000    0.995    0.000 _response.py:261(__init__)
+    26403    0.082    0.000    0.972    0.000 socket.py:223(meth)
+   459685    0.883    0.000    0.949    0.000 {method 'sub' of '_sre.SRE_Pattern' objects}
+   331793    0.909    0.000    0.909    0.000 Parser.py:232(__init__)
+     6597    0.082    0.000    0.861    0.000 _html.py:49(encoding)
+    39394    0.648    0.000    0.840    0.000 __init__.py:38(lookup)
+   331793    0.801    0.000    0.801    0.000 {method 'groupdict' of '_sre.SRE_Match' objects}
+    39394    0.102    0.000    0.789    0.000 _lxml.py:63(prepare_markup)
+    26374    0.759    0.000    0.787    0.000 _util.py:46(isstringlike)
+   474903    0.781    0.000    0.781    0.000 {method 'add' of 'set' objects}
+    32992    0.563    0.000    0.754    0.000 rfc822.py:228(getallmatchingheaders)
+    24625    0.193    0.000    0.723    0.000 cookielib.py:1057(return_ok)
+     6562    0.719    0.000    0.719    0.000 {_codecs.utf_8_encode}
+    19759    0.285    0.000    0.718    0.000 _headersutil.py:61(split_header_words)
+  3182173    0.717    0.000    0.717    0.000 {method 'startswith' of 'str' objects}
+  2349202    0.692    0.000    0.692    0.000 {method 'strip' of 'unicode' objects}
+     6562    0.084    0.000    0.674    0.000 dammit.py:214(__init__)
+     6598    0.033    0.000    0.659    0.000 _urllib2_fork.py:1191(http_response)
+   331793    0.552    0.000    0.650    0.000 Parser.py:187(addRating)
+    92036    0.471    0.000    0.638    0.000 _sgmllib_copy.py:355(finish_endtag)
+     6598    0.122    0.000    0.626    0.000 cookielib.py:1635(extract_cookies)
+   183939    0.245    0.000    0.614    0.000 _http.py:148(handle_starttag)
+     6586    0.039    0.000    0.608    0.000 Scraper.py:193(iriToUri)
+     6598    0.050    0.000    0.606    0.000 _response.py:482(upgrade_response)
+    78790    0.423    0.000    0.599    0.000 posixpath.py:68(join)
+    46182    0.303    0.000    0.594    0.000 _response.py:73(__init__)
+     9625    0.133    0.000    0.581    0.000 Parser.py:155(__str__)
+    39394    0.247    0.000    0.553    0.000 element.py:712(for_name_and_ids)
+    37814    0.049    0.000    0.532    0.000 cookielib.py:598(eff_request_host)
+    39394    0.448    0.000    0.529    0.000 codecs.py:648(__init__)
+   257150    0.292    0.000    0.527    0.000 {method 'sort' of 'list' objects}
+    19802    0.516    0.000    0.516    0.000 {method 'sendall' of '_socket.socket' objects}
+   534454    0.492    0.000    0.498    0.000 _response.py:103(__setattr__)
+    13187    0.054    0.000    0.491    0.000 _request.py:21(__init__)
+     6586    0.026    0.000    0.479    0.000 urlparse.py:223(urlunparse)
+    13187    0.079    0.000    0.476    0.000 cookielib.py:1691(clear_expired_cookies)
+    39394    0.177    0.000    0.475    0.000 element.py:69(__new__)
+4573/3111    0.032    0.000    0.470    0.000 os.py:136(makedirs)
+     1565    0.039    0.000    0.465    0.000 Parser.py:805(processLocRow)
+    37814    0.119    0.000    0.461    0.000 cookielib.py:582(request_host)
+   341441    0.327    0.000    0.457    0.000 element.py:1172(children)
+    13194    0.080    0.000    0.454    0.000 httplib.py:518(close)
+    46102    0.049    0.000    0.442    0.000 Scraper.py:196(<genexpr>)
+    45963    0.277    0.000    0.436    0.000 urlparse.py:160(_splitnetloc)
+    39634    0.217    0.000    0.417    0.000 _response.py:91(__getattr__)
+19796/19794    0.391    0.000    0.412    0.000 socket.py:276(close)
+   151096    0.220    0.000    0.401    0.000 _http.py:154(unknown_starttag)
+    13187    0.074    0.000    0.398    0.000 _urllib2_fork.py:144(__init__)
+   396194    0.370    0.000    0.370    0.000 {method 'split' of 'str' objects}
+    32843    0.127    0.000    0.368    0.000 _http.py:60(start_meta)
+    24625    0.062    0.000    0.366    0.000 cookielib.py:1122(return_ok_domain)
+     6601    0.359    0.000    0.359    0.000 {method 'connect' of '_socket.socket' objects}
+    43968    0.249    0.000    0.355    0.000 posixpath.py:89(split)
+     6598    0.041    0.000    0.353    0.000 cookielib.py:1555(make_cookies)
+     6587    0.141    0.000    0.347    0.000 markupbase.py:65(parse_declaration)
+    13186    0.071    0.000    0.344    0.000 cookielib.py:1144(domain_return_ok)
+    39394    0.341    0.000    0.341    0.000 {method 'close' of 'file' objects}
+     4573    0.323    0.000    0.323    0.000 {posix.mkdir}
+    13187    0.093    0.000    0.320    0.000 _urllib2_fork.py:1040(do_request_)
+     6562    0.055    0.000    0.311    0.000 dammit.py:295(_convert_from)
+    90429    0.298    0.000    0.298    0.000 Parser.py:904(robustConv)
+    13186    0.045    0.000    0.295    0.000 _mechanize.py:321(_visit_request)
+113467/37823    0.182    0.000    0.292    0.000 cookielib.py:1180(deepvalues)
+    13187    0.058    0.000    0.291    0.000 _urllib2_fork.py:126(request_host)
+    13187    0.051    0.000    0.289    0.000 socks.py:125(__init__)
+   331802    0.279    0.000    0.279    0.000 {method 'index' of 'list' objects}
+     6562    0.129    0.000    0.275    0.000 dammit.py:347(_detectEncoding)
+   189687    0.165    0.000    0.273    0.000 _gzip.py:86(__getattr__)
+    11135    0.064    0.000    0.266    0.000 genericpath.py:15(exists)
+   454701    0.249    0.000    0.249    0.000 {method 'group' of '_sre.SRE_Match' objects}
+   910387    0.247    0.000    0.247    0.000 {method 'end' of '_sre.SRE_Match' objects}
+    13175    0.027    0.000    0.246    0.000 cookielib.py:1166(path_return_ok)
+     6598    0.050    0.000    0.245    0.000 _urllib2_fork.py:449(http_response)
+    13187    0.187    0.000    0.238    0.000 socket.py:185(__init__)
+     6599    0.034    0.000    0.237    0.000 _headersutil.py:29(is_html)
+    45994    0.059    0.000    0.237    0.000 _http.py:163(unescape_attr_if_required)
+6618/6597    0.022    0.000    0.234    0.000 _response.py:87(close)
+   331795    0.232    0.000    0.232    0.000 {_locale.setlocale}
+   230813    0.164    0.000    0.216    0.000 _urllib2_fork.py:425(__lt__)
+    13178    0.052    0.000    0.214    0.000 cookielib.py:609(request_path)
+    39481    0.144    0.000    0.213    0.000 _response.py:23(len_of_seekable)
+    32975    0.150    0.000    0.210    0.000 threading.py:146(acquire)
+   220000    0.207    0.000    0.207    0.000 {method 'endswith' of 'str' objects}
+6618/6597    0.079    0.000    0.203    0.000 _response.py:366(close)
+    26382    0.055    0.000    0.199    0.000 _rfc3986.py:67(urlsplit)
+     6562    0.189    0.000    0.192    0.000 dammit.py:322(_to_unicode)
+    52906    0.130    0.000    0.191    0.000 _response.py:360(info)
+    59229    0.121    0.000    0.180    0.000 rfc822.py:197(isheader)
+    26374    0.046    0.000    0.179    0.000 _urllib2_fork.py:202(get_host)
+    45994    0.117    0.000    0.178    0.000 _http.py:82(unescape_attr)
+   560738    0.176    0.000    0.176    0.000 {method 'start' of '_sre.SRE_Match' objects}
+    65927    0.128    0.000    0.175    0.000 httplib.py:945(putheader)
+    13187    0.088    0.000    0.175    0.000 cookielib.py:1253(_cookie_attrs)
+    19761    0.100    0.000    0.172    0.000 markupbase.py:377(_scan_name)
+    32930    0.035    0.000    0.168    0.000 Scraper.py:190(urlEncodeNonAscii)
+   169841    0.165    0.000    0.165    0.000 {method 'find' of 'unicode' objects}
+   309592    0.162    0.000    0.162    0.000 {method 'seek' of 'cStringIO.StringO' objects}
+    13187    0.045    0.000    0.162    0.000 _urllib2_fork.py:209(get_selector)
+    32710    0.045    0.000    0.157    0.000 _gzip.py:79(read)
+   663595    0.157    0.000    0.157    0.000 {method 'toordinal' of 'datetime.date' objects}
+     6600    0.050    0.000    0.154    0.000 httplib.py:335(__init__)
+    34288    0.040    0.000    0.151    0.000 re.py:144(sub)
+    32975    0.112    0.000    0.148    0.000 threading.py:186(release)
+    96982    0.088    0.000    0.148    0.000 <string>:8(__new__)
+   158363    0.147    0.000    0.147    0.000 {cStringIO.StringIO}
+   341388    0.145    0.000    0.145    0.000 Parser.py:179(getRatings)
+    59229    0.114    0.000    0.144    0.000 httplib.py:220(addheader)
+   659863    0.134    0.000    0.134    0.000 {method 'setdefault' of 'dict' objects}
+     9630    0.133    0.000    0.133    0.000 Parser.py:74(__init__)
+     6597    0.050    0.000    0.132    0.000 _http.py:144(__init__)
+   341442    0.130    0.000    0.130    0.000 {iter}
+    13190    0.043    0.000    0.130    0.000 cookielib.py:639(escape_path)
+     6586    0.048    0.000    0.123    0.000 idna.py:147(encode)
+    40960    0.085    0.000    0.121    0.000 re.py:226(_compile)
+    92185    0.121    0.000    0.121    0.000 {method 'getvalue' of 'cStringIO.StringO' objects}
+     6597    0.087    0.000    0.121    0.000 _html.py:519(set_response)
+   331793    0.117    0.000    0.117    0.000 {method 'iterkeys' of 'dict' objects}
+     6598    0.082    0.000    0.116    0.000 mimetools.py:33(parsetype)
+     6598    0.028    0.000    0.114    0.000 httplib.py:777(close)
+    32710    0.113    0.000    0.113    0.000 {method 'read' of 'cStringIO.StringI' objects}
+    26378    0.031    0.000    0.112    0.000 _urllib2_fork.py:195(get_type)
+    13237    0.084    0.000    0.112    0.000 _response.py:344(_set_fp)
+    39559    0.052    0.000    0.110    0.000 cookielib.py:1175(vals_sorted_by_key)
+     6606    0.024    0.000    0.109    0.000 re.py:153(subn)
+    13198    0.091    0.000    0.109    0.000 socket.py:246(__init__)
+   331800    0.109    0.000    0.109    0.000 {method 'translate' of 'str' objects}
+   167434    0.107    0.000    0.107    0.000 {method 'startswith' of 'unicode' objects}
+    52754    0.106    0.000    0.106    0.000 {method 'update' of 'dict' objects}
+     6600    0.038    0.000    0.104    0.000 socket.py:212(makefile)
+    39394    0.089    0.000    0.098    0.000 inspect.py:67(ismethod)
+     6619    0.021    0.000    0.094    0.000 _response.py:337(__init__)
+    13187    0.044    0.000    0.093    0.000 httplib.py:691(__init__)
+    39588    0.059    0.000    0.091    0.000 rfc822.py:285(getheader)
+    32972    0.077    0.000    0.091    0.000 _headersutil.py:52(unmatched)
+    32832    0.066    0.000    0.088    0.000 stat.py:49(S_ISREG)
+    52541    0.086    0.000    0.086    0.000 {_codecs.lookup}
+   223817    0.086    0.000    0.086    0.000 {method 'strip' of 'str' objects}
+     6598    0.057    0.000    0.086    0.000 socket.py:192(close)
+     6598    0.041    0.000    0.085    0.000 _urllib2_fork.py:75(create_readline_wrapper)
+    13187    0.070    0.000    0.083    0.000 httplib.py:835(putrequest)
+    32884    0.082    0.000    0.082    0.000 {method 'read' of 'cStringIO.StringO' objects}
+    13187    0.044    0.000    0.081    0.000 urllib.py:1067(splittype)
+    13187    0.022    0.000    0.078    0.000 _urllib2_fork.py:81(splithost)
+   331793    0.078    0.000    0.078    0.000 {method 'weekday' of 'datetime.date' objects}
+     6597    0.033    0.000    0.077    0.000 _response.py:112(seek)
+     6598    0.022    0.000    0.077    0.000 _sgmllib_copy.py:72(__init__)
+   261453    0.074    0.000    0.074    0.000 _sgmllib_copy.py:445(handle_data)
+    13197    0.024    0.000    0.074    0.000 _response.py:280(geturl)
+    39394    0.048    0.000    0.073    0.000 codecs.py:705(__getattr__)
+   335621    0.067    0.000    0.067    0.000 {method 'isspace' of 'str' objects}
+     7024    0.021    0.000    0.065    0.000 _sgmllib_copy.py:306(_convert_ref)
+   270131    0.064    0.000    0.064    0.000 {method 'tell' of 'cStringIO.StringO' objects}
+    57140    0.062    0.000    0.062    0.000 {method 'rfind' of 'unicode' objects}
+    39394    0.062    0.000    0.062    0.000 _lxml.py:189(default_parser)
+131913/131869    0.062    0.000    0.062    0.000 {method 'join' of 'str' objects}
+    45996    0.044    0.000    0.061    0.000 _html.py:289(unescape)
+     6562    0.023    0.000    0.061    0.000 dammit.py:413(find_codec)
+    79114    0.042    0.000    0.058    0.000 _urllib2_fork.py:1100(<genexpr>)
+    39394    0.057    0.000    0.057    0.000 _lxml.py:94(close)
+     2298    0.004    0.000    0.057    0.000 urlparse.py:68(clear_cache)
+     9625    0.022    0.000    0.057    0.000 Parser.py:55(__str__)
+    39394    0.056    0.000    0.056    0.000 codecs.py:395(__init__)
+    13187    0.010    0.000    0.056    0.000 _mechanize.py:64(http_request)
+   118710    0.056    0.000    0.056    0.000 {setattr}
+     6598    0.048    0.000    0.055    0.000 _sgmllib_copy.py:77(reset)
+     6598    0.028    0.000    0.055    0.000 httplib.py:488(_check_close)
+    13187    0.028    0.000    0.054    0.000 urllib.py:1210(unquote)
+    39394    0.047    0.000    0.053    0.000 inspect.py:142(isfunction)
+     2299    0.053    0.000    0.053    0.000 {method 'clear' of 'dict' objects}
+    94369    0.052    0.000    0.052    0.000 {method 'endswith' of 'unicode' objects}
+    79114    0.039    0.000    0.051    0.000 httplib.py:807(_output)
+        5    0.000    0.000    0.051    0.010 __init__.py:71(search_function)
+        5    0.043    0.009    0.051    0.010 {__import__}
+    13323    0.033    0.000    0.050    0.000 _response.py:363(geturl)
+    39394    0.044    0.000    0.050    0.000 inspect.py:209(iscode)
+    46091    0.049    0.000    0.049    0.000 {min}
+    13187    0.033    0.000    0.049    0.000 httplib.py:721(_set_hostport)
+    13198    0.030    0.000    0.048    0.000 urllib.py:1251(quote)
+    39566    0.047    0.000    0.047    0.000 _urllib2_fork.py:163(__getattr__)
+     1565    0.014    0.000    0.045    0.000 Parser.py:320(__str__)
+    43968    0.045    0.000    0.045    0.000 {method 'rstrip' of 'unicode' objects}
+    65827    0.045    0.000    0.045    0.000 rfc822.py:209(islast)
+     6606    0.044    0.000    0.044    0.000 {method 'subn' of '_sre.SRE_Pattern' objects}
+    65950    0.044    0.000    0.044    0.000 threading.py:63(_note)
+    39394    0.043    0.000    0.043    0.000 element.py:909(__setitem__)
+    19758    0.023    0.000    0.042    0.000 idna.py:62(ToASCII)
+     9630    0.041    0.000    0.041    0.000 Parser.py:42(__init__)
+    76367    0.040    0.000    0.040    0.000 {method 'lower' of 'unicode' objects}
+     7020    0.027    0.000    0.040    0.000 _sgmllib_copy.py:399(convert_charref)
+    13187    0.019    0.000    0.040    0.000 _gzip.py:93(http_request)
+    13187    0.020    0.000    0.039    0.000 _rfc3986.py:45(is_clean_uri)
+    39553    0.029    0.000    0.037    0.000 _urllib2_fork.py:242(add_unredirected_header)
+    24625    0.023    0.000    0.036    0.000 cookielib.py:1102(return_ok_expires)
+    39599    0.035    0.000    0.035    0.000 {map}
+    20032    0.034    0.000    0.034    0.000 {max}
+    95400    0.034    0.000    0.034    0.000 cookielib.py:43(_debug)
+    26388    0.033    0.000    0.033    0.000 {delattr}
+     6562    0.016    0.000    0.033    0.000 dammit.py:419(_codec)
+    79130    0.033    0.000    0.033    0.000 _response.py:277(info)
+     6598    0.020    0.000    0.033    0.000 _response.py:432(get_seek_wrapper_class)
+    24625    0.026    0.000    0.033    0.000 cookielib.py:1084(return_ok_verifiability)
+     6541    0.032    0.000    0.032    0.000 {zlib.decompressobj}
+    85437    0.031    0.000    0.031    0.000 _sgmllib_copy.py:462(unknown_endtag)
+    65827    0.030    0.000    0.030    0.000 rfc822.py:219(iscomment)
+    78788    0.030    0.000    0.030    0.000 __init__.py:124(deprecated_argument)
+    13193    0.023    0.000    0.029    0.000 _rfc3986.py:74(urlunsplit)
+     6597    0.029    0.000    0.029    0.000 _html.py:221(set_response)
+    14437    0.029    0.000    0.029    0.000 {method 'format' of 'str' objects}
+    13187    0.025    0.000    0.028    0.000 urllib.py:1058(unwrap)
+    78788    0.028    0.000    0.028    0.000 __init__.py:98(reset)
+     6597    0.027    0.000    0.027    0.000 _html.py:146(set_response)
+     6541    0.020    0.000    0.027    0.000 _gzip.py:68(feed)
+    26378    0.019    0.000    0.024    0.000 _opener.py:38(set_request_attr)
+    39394    0.024    0.000    0.024    0.000 codecs.py:322(__init__)
+     6597    0.024    0.000    0.024    0.000 _html.py:245(set_response)
+     6601    0.016    0.000    0.023    0.000 socket.py:285(__del__)
+    67486    0.023    0.000    0.023    0.000 {method 'keys' of 'dict' objects}
+    70801    0.023    0.000    0.023    0.000 _urllib2_fork.py:192(get_full_url)
+    35150    0.023    0.000    0.023    0.000 element.py:515(next_siblings)
+    39552    0.022    0.000    0.022    0.000 _urllib2_fork.py:246(has_header)
+    49261    0.022    0.000    0.022    0.000 cookielib.py:774(is_expired)
+    32832    0.022    0.000    0.022    0.000 stat.py:24(S_IFMT)
+     9630    0.022    0.000    0.022    0.000 {method 'replace' of 'unicode' objects}
+    32972    0.021    0.000    0.021    0.000 {method 'acquire' of 'thread.lock' objects}
+     9625    0.021    0.000    0.021    0.000 Parser.py:333(addBeer)
+    13188    0.015    0.000    0.021    0.000 _urllib2_fork.py:238(add_header)
+    32979    0.020    0.000    0.020    0.000 {method 'groups' of '_sre.SRE_Match' objects}
+    19844    0.020    0.000    0.020    0.000 {method 'rstrip' of 'str' objects}
+    13187    0.013    0.000    0.020    0.000 urllib.py:1043(_is_unicode)
+     6601    0.020    0.000    0.020    0.000 {_struct.pack}
+    65950    0.019    0.000    0.019    0.000 {thread.get_ident}
+    24625    0.018    0.000    0.018    0.000 cookielib.py:1075(return_ok_version)
+    24625    0.015    0.000    0.018    0.000 cookielib.py:1263(<lambda>)
+    13187    0.018    0.000    0.018    0.000 {built-in method fromkeys}
+    20252    0.018    0.000    0.018    0.000 Parser.py:32(__init__)
+    13197    0.017    0.000    0.017    0.000 socket.py:292(flush)
+    65928    0.017    0.000    0.017    0.000 {method 'capitalize' of 'str' objects}
+     6601    0.017    0.000    0.017    0.000 {_socket.inet_aton}
+    19758    0.016    0.000    0.016    0.000 {method 'encode' of 'str' objects}
+    79122    0.016    0.000    0.016    0.000 {method 'iteritems' of 'dict' objects}
+    65927    0.016    0.000    0.016    0.000 {method 'title' of 'str' objects}
+    13188    0.011    0.000    0.016    0.000 _urllib2_fork.py:175(get_method)
+     6577    0.013    0.000    0.016    0.000 rfc822.py:435(has_key)
+    13185    0.013    0.000    0.015    0.000 _mechanize.py:43(add)
+     6600    0.014    0.000    0.014    0.000 {_struct.unpack}
+    32972    0.013    0.000    0.013    0.000 {method 'span' of '_sre.SRE_Match' objects}
+    32972    0.013    0.000    0.013    0.000 {time.time}
+     6994    0.008    0.000    0.013    0.000 _sgmllib_copy.py:409(convert_codepoint)
+    13596    0.012    0.000    0.012    0.000 {chr}
+       15    0.000    0.000    0.012    0.001 sre_compile.py:493(compile)
+    32972    0.012    0.000    0.012    0.000 {method 'release' of 'thread.lock' objects}
+    13178    0.012    0.000    0.012    0.000 cookielib.py:888(is_blocked)
+    39394    0.011    0.000    0.011    0.000 {method 'reverse' of 'list' objects}
+     6586    0.011    0.000    0.011    0.000 urlparse.py:233(urlunsplit)
+     6598    0.011    0.000    0.011    0.000 mimetools.py:50(parseplist)
+    26375    0.010    0.000    0.010    0.000 _urllib2_fork.py:186(has_data)
+    13187    0.010    0.000    0.010    0.000 cookielib.py:1710(__iter__)
+    24625    0.010    0.000    0.010    0.000 cookielib.py:1108(return_ok_port)
+    24625    0.010    0.000    0.010    0.000 cookielib.py:1096(return_ok_secure)
+     6541    0.010    0.000    0.010    0.000 _gzip.py:10(__init__)
+       15    0.000    0.000    0.010    0.001 sre_compile.py:478(_code)
+       12    0.000    0.000    0.009    0.001 re.py:188(compile)
+     1565    0.006    0.000    0.008    0.000 Parser.py:295(__init__)
+        1    0.000    0.000    0.008    0.008 _mechanize.py:462(select_form)
+    26392    0.008    0.000    0.008    0.000 {method 'extend' of 'list' objects}
+        2    0.000    0.000    0.008    0.004 _html.py:557(forms)
+        1    0.000    0.000    0.008    0.008 _html.py:226(forms)
+        1    0.000    0.000    0.008    0.008 _form.py:813(ParseResponseEx)
+        1    0.000    0.000    0.008    0.008 _form.py:963(_ParseFileEx)
+       31    0.000    0.000    0.008    0.000 sre_compile.py:178(_compile_charset)
+        1    0.001    0.001    0.008    0.008 idna.py:3(<module>)
+       31    0.002    0.000    0.008    0.000 sre_compile.py:207(_optimize_charset)
+    13204    0.008    0.000    0.008    0.000 {method 'rfind' of 'str' objects}
+     6598    0.007    0.000    0.007    0.000 markupbase.py:37(reset)
+        8    0.000    0.000    0.007    0.001 _form.py:756(feed)
+     6541    0.007    0.000    0.007    0.000 _gzip.py:67(__init__)
+    24628    0.007    0.000    0.007    0.000 _urllib2_fork.py:235(is_unverifiable)
+     1565    0.007    0.000    0.007    0.000 Parser.py:378(addBrewery)
+    19785    0.006    0.000    0.006    0.000 {method 'update' of 'set' objects}
+    13187    0.006    0.000    0.006    0.000 _urllib2_fork.py:227(has_proxy)
+    13178    0.006    0.000    0.006    0.000 cookielib.py:903(is_not_allowed)
+     6597    0.006    0.000    0.006    0.000 _sgmllib_copy.py:394(report_unbalanced)
+     6597    0.006    0.000    0.006    0.000 _http.py:57(__init__)
+        2    0.004    0.002    0.006    0.003 sre_compile.py:301(_optimize_unicode)
+    56/15    0.001    0.000    0.006    0.000 sre_compile.py:32(_compile)
+    13175    0.006    0.000    0.006    0.000 {method 'values' of 'dict' objects}
+     6618    0.005    0.000    0.005    0.000 _response.py:301(__init__)
+      273    0.001    0.000    0.005    0.000 _http.py:78(handle_charref)
+      299    0.003    0.000    0.005    0.000 _html.py:312(unescape_charref)
+     6586    0.005    0.000    0.005    0.000 socks.py:50(__init__)
+     6657    0.004    0.000    0.004    0.000 {method 'lstrip' of 'str' objects}
+       15    0.000    0.000    0.004    0.000 sre_compile.py:359(_compile_info)
+    13187    0.004    0.000    0.004    0.000 httplib.py:741(set_debuglevel)
+     6587    0.004    0.000    0.004    0.000 _sgmllib_copy.py:453(handle_decl)
+      126    0.001    0.000    0.004    0.000 _response.py:449(__init__)
+     6645    0.003    0.000    0.003    0.000 {ord}
+        3    0.000    0.000    0.003    0.001 cookielib.py:444(parse_ns_headers)
+       15    0.000    0.000    0.002    0.000 sre_parse.py:675(parse)
+    22/15    0.000    0.000    0.002    0.000 sre_parse.py:301(_parse_sub)
+    37/15    0.001    0.000    0.002    0.000 sre_parse.py:379(_parse)
+        1    0.000    0.000    0.002    0.002 _strptime.py:263(compile)
+        1    0.000    0.000    0.002    0.002 _strptime.py:12(<module>)
+        1    0.000    0.000    0.002    0.002 _strptime.py:179(__init__)
+       54    0.000    0.000    0.002    0.000 re.py:164(split)
+       93    0.000    0.000    0.001    0.000 Parser.py:366(__str__)
+       21    0.000    0.000    0.001    0.000 _urllib2_fork.py:464(http_error_default)
+        6    0.000    0.000    0.001    0.000 cookielib.py:1534(_cookies_from_attrs_set)
+       28    0.000    0.000    0.001    0.000 _html.py:293(replace_entities)
+       21    0.000    0.000    0.001    0.000 urllib2.py:154(__init__)
+       11    0.001    0.000    0.001    0.000 sre_compile.py:258(_mk_bitmap)
+      166    0.000    0.000    0.001    0.000 Parser.py:423(__str__)
+        4    0.000    0.000    0.001    0.000 _form.py:647(handle_entityref)
+       12    0.000    0.000    0.001    0.000 cookielib.py:1442(_cookie_from_cookie_tuple)
+        4    0.000    0.000    0.001    0.000 _form.py:122(unescape)
+        4    0.000    0.000    0.001    0.000 _strptime.py:240(pattern)
+       21    0.000    0.000    0.001    0.000 urllib.py:1006(__init__)
+        1    0.000    0.000    0.001    0.001 _strptime.py:50(__init__)
+        9    0.000    0.000    0.001    0.000 cookielib.py:212(http2time)
+      222    0.000    0.000    0.001    0.000 sre_parse.py:201(get)
+      287    0.000    0.000    0.001    0.000 sre_parse.py:182(__next)
+       21    0.000    0.000    0.000    0.000 urllib.py:952(__init__)
+    73/32    0.000    0.000    0.000    0.000 sre_parse.py:140(getwidth)
+        6    0.000    0.000    0.000    0.000 _strptime.py:221(__seqToRE)
+       22    0.000    0.000    0.000    0.000 urllib2.py:167(__str__)
+      551    0.000    0.000    0.000    0.000 {unichr}
+      187    0.000    0.000    0.000    0.000 sre_parse.py:130(__getitem__)
+       50    0.000    0.000    0.000    0.000 _strptime.py:236(<genexpr>)
+       21    0.000    0.000    0.000    0.000 _response.py:443(httperror_seek_wrapper)
+        1    0.000    0.000    0.000    0.000 _form.py:752(__init__)
+        1    0.000    0.000    0.000    0.000 _form.py:369(__init__)
+        9    0.000    0.000    0.000    0.000 cookielib.py:137(_str2time)
+       44    0.000    0.000    0.000    0.000 re.py:204(escape)
+        1    0.000    0.000    0.000    0.000 _form.py:159(get_entitydefs)
+        1    0.000    0.000    0.000    0.000 _mechanize.py:526(click)
+      161    0.000    0.000    0.000    0.000 _form.py:570(handle_data)
+       38    0.000    0.000    0.000    0.000 {method 'strftime' of 'datetime.date' objects}
+        3    0.000    0.000    0.000    0.000 cookielib.py:911(set_ok)
+        7    0.000    0.000    0.000    0.000 _form.py:2700(new_control)
+        1    0.000    0.000    0.000    0.000 _strptime.py:96(__calc_month)
+       93    0.000    0.000    0.000    0.000 Parser.py:434(addLocation)
+       40    0.000    0.000    0.000    0.000 __init__.py:1154(warning)
+        1    0.000    0.000    0.000    0.000 _form.py:2974(click)
+        1    0.000    0.000    0.000    0.000 _form.py:3188(_click)
+        1    0.000    0.000    0.000    0.000 _form.py:2348(_click)
+        1    0.000    0.000    0.000    0.000 _form.py:3261(_switch_click)
+        1    0.000    0.000    0.000    0.000 _strptime.py:88(__calc_weekday)
+        1    0.000    0.000    0.000    0.000 stringprep.py:6(<module>)
+       26    0.000    0.000    0.000    0.000 calendar.py:55(__getitem__)
+      137    0.000    0.000    0.000    0.000 sre_parse.py:195(match)
+      166    0.000    0.000    0.000    0.000 Parser.py:480(addCountry)
+        6    0.000    0.000    0.000    0.000 cookielib.py:1345(_normalized_cookie_tuples)
+       93    0.000    0.000    0.000    0.000 Parser.py:348(__init__)
+       40    0.000    0.000    0.000    0.000 cookielib.py:637(uppercase_escaped_char)
+        3    0.000    0.000    0.000    0.000 _mechanize.py:440(viewing_html)
+       14    0.000    0.000    0.000    0.000 calendar.py:74(__getitem__)
+       40    0.000    0.000    0.000    0.000 __init__.py:1345(isEnabledFor)
+        1    0.000    0.000    0.000    0.000 _form.py:3225(_request_data)
+        3    0.000    0.000    0.000    0.000 abc.py:148(__subclasscheck__)
+        3    0.000    0.000    0.000    0.000 _rfc3986.py:93(urljoin)
+        9    0.000    0.000    0.000    0.000 cookielib.py:72(_timegm)
+      166    0.000    0.000    0.000    0.000 Parser.py:408(__init__)
+        3    0.000    0.000    0.000    0.000 cookielib.py:966(set_ok_path)
+        8    0.000    0.000    0.000    0.000 re.py:271(_subx)
+        1    0.000    0.000    0.000    0.000 latin_1.py:8(<module>)
+        1    0.000    0.000    0.000    0.000 _html.py:69(is_html)
+        1    0.000    0.000    0.000    0.000 _strptime.py:115(__calc_date_time)
+        6    0.000    0.000    0.000    0.000 _form.py:1190(__init__)
+        9    0.000    0.000    0.000    0.000 _sgmllib_copy.py:386(handle_starttag)
+       17    0.000    0.000    0.000    0.000 sre_parse.py:178(__init__)
+       17    0.000    0.000    0.000    0.000 sre_compile.py:354(_simple)
+       96    0.000    0.000    0.000    0.000 sre_parse.py:138(append)
+        8    0.000    0.000    0.000    0.000 re.py:251(_compile_repl)
+        1    0.000    0.000    0.000    0.000 _urllib2_fork.py:504(redirect_request)
+        4    0.000    0.000    0.000    0.000 _form.py:1267(__init__)
+        1    0.000    0.000    0.000    0.000 _http.py:368(parse_refresh_header)
+       21    0.000    0.000    0.000    0.000 element.py:1389(childGenerator)
+        2    0.000    0.000    0.000    0.000 _rfc3986.py:30(clean_url)
+        2    0.000    0.000    0.000    0.000 _mechanize.py:165(_add_referer_header)
+        1    0.000    0.000    0.000    0.000 _http.py:361(clean_refresh_url)
+        2    0.000    0.000    0.000    0.000 sre_parse.py:703(parse_template)
+        9    0.000    0.000    0.000    0.000 calendar.py:610(timegm)
+        7    0.000    0.000    0.000    0.000 _form.py:623(do_input)
+        1    0.000    0.000    0.000    0.000 urllib.py:1297(urlencode)
+        3    0.000    0.000    0.000    0.000 cookielib.py:1622(set_cookie)
+        2    0.000    0.000    0.000    0.000 _http.py:73(handle_entityref)
+       15    0.000    0.000    0.000    0.000 {_sre.compile}
+       76    0.000    0.000    0.000    0.000 sre_parse.py:126(__len__)
+        3    0.000    0.000    0.000    0.000 cookielib.py:725(__init__)
+       48    0.000    0.000    0.000    0.000 _form.py:2684(__setattr__)
+       19    0.000    0.000    0.000    0.000 {method 'copy' of 'dict' objects}
+        4    0.000    0.000    0.000    0.000 _form.py:3117(_find_control)
+        3    0.000    0.000    0.000    0.000 _form.py:2748(fixup)
+       56    0.000    0.000    0.000    0.000 {method 'index' of 'str' objects}
+        5    0.000    0.000    0.000    0.000 __init__.py:49(normalize_encoding)
+       40    0.000    0.000    0.000    0.000 __init__.py:1331(getEffectiveLevel)
+        3    0.000    0.000    0.000    0.000 _form.py:3056(find_control)
+       88    0.000    0.000    0.000    0.000 _form.py:1214(__setattr__)
+        7    0.000    0.000    0.000    0.000 markupbase.py:169(parse_comment)
+       56    0.000    0.000    0.000    0.000 sre_parse.py:90(__init__)
+       30    0.000    0.000    0.000    0.000 sre_compile.py:472(isstring)
+        3    0.000    0.000    0.000    0.000 _rfc3986.py:130(urljoin_parts)
+        3    0.000    0.000    0.000    0.000 _form.py:2641(__init__)
+      175    0.000    0.000    0.000    0.000 _form.py:91(debug)
+        6    0.000    0.000    0.000    0.000 urllib.py:1290(quote_plus)
+        2    0.000    0.000    0.000    0.000 _form.py:2779(__setitem__)
+        5    0.000    0.000    0.000    0.000 codecs.py:77(__new__)
+        2    0.000    0.000    0.000    0.000 _form.py:2331(__init__)
+        9    0.000    0.000    0.000    0.000 cookielib.py:437(_strip_quotes)
+        1    0.000    0.000    0.000    0.000 _headersutil.py:21(is_html_file_extension)
+        6    0.000    0.000    0.000    0.000 {sorted}
+        1    0.000    0.000    0.000    0.000 _form.py:3203(_pairs)
+      125    0.000    0.000    0.000    0.000 _sgmllib_copy.py:461(unknown_starttag)
+        3    0.000    0.000    0.000    0.000 _abcoll.py:128(__subclasshook__)
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:58(__iter__)
+        3    0.000    0.000    0.000    0.000 _rfc3986.py:183(remove_dot_segments)
+        7    0.000    0.000    0.000    0.000 Parser.py:470(__str__)
+        1    0.000    0.000    0.000    0.000 _form.py:3208(_pairs_and_controls)
+        1    0.000    0.000    0.000    0.000 _form.py:2196(__init__)
+        1    0.000    0.000    0.000    0.000 _strptime.py:160(__calc_timezone)
+        2    0.000    0.000    0.000    0.000 latin_1.py:41(getregentry)
+       69    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        7    0.000    0.000    0.000    0.000 sre_parse.py:225(_class_escape)
+        3    0.000    0.000    0.000    0.000 _abcoll.py:24(_hasattr)
+        3    0.000    0.000    0.000    0.000 _form.py:405(start_form)
+        4    0.000    0.000    0.000    0.000 _form.py:126(replace_entities)
+       52    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 idna.py:279(getregentry)
+        3    0.000    0.000    0.000    0.000 cookielib.py:326(split_header_words)
+        3    0.000    0.000    0.000    0.000 cookielib.py:977(set_ok_domain)
+       15    0.000    0.000    0.000    0.000 sre_parse.py:67(__init__)
+        3    0.000    0.000    0.000    0.000 urllib2.py:147(__str__)
+        1    0.000    0.000    0.000    0.000 {time.tzset}
+       60    0.000    0.000    0.000    0.000 {_sre.getlower}
+       13    0.000    0.000    0.000    0.000 sre_parse.py:257(_escape)
+        3    0.000    0.000    0.000    0.000 urllib2.py:143(__init__)
+        9    0.000    0.000    0.000    0.000 cookielib.py:1649(clear)
+        1    0.000    0.000    0.000    0.000 utf_8.py:33(getregentry)
+       21    0.000    0.000    0.000    0.000 urllib2.py:176(info)
+       20    0.000    0.000    0.000    0.000 sre_compile.py:51(fixup)
+        8    0.000    0.000    0.000    0.000 {time.strftime}
+       68    0.000    0.000    0.000    0.000 sre_compile.py:24(_identityfunction)
+       21    0.000    0.000    0.000    0.000 urllib.py:1018(geturl)
+       16    0.000    0.000    0.000    0.000 _form.py:1207(__getattr__)
+        7    0.000    0.000    0.000    0.000 sre_parse.py:72(opengroup)
+        3    0.000    0.000    0.000    0.000 cookielib.py:945(set_ok_verifiability)
+        1    0.000    0.000    0.000    0.000 _strptime.py:103(__calc_am_pm)
+        9    0.000    0.000    0.000    0.000 cookielib.py:123(offset_from_tz_string)
+        7    0.000    0.000    0.000    0.000 _form.py:1119(add_to_form)
+        3    0.000    0.000    0.000    0.000 {any}
+        1    0.000    0.000    0.000    0.000 ascii.py:41(getregentry)
+        3    0.000    0.000    0.000    0.000 cookielib.py:1543(_process_rfc2109_cookies)
+        7    0.000    0.000    0.000    0.000 sre_parse.py:83(closegroup)
+        2    0.000    0.000    0.000    0.000 {method 'tolist' of 'array.array' objects}
+        1    0.000    0.000    0.000    0.000 _form.py:1651(__init__)
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:26(__exit__)
+       17    0.000    0.000    0.000    0.000 sre_parse.py:134(__setitem__)
+        3    0.000    0.000    0.000    0.000 _form.py:427(end_form)
+        1    0.000    0.000    0.000    0.000 rfc822.py:390(__setitem__)
+        1    0.000    0.000    0.000    0.000 posixpath.py:104(splitext)
+        3    0.000    0.000    0.000    0.000 sre_parse.py:216(isname)
+        4    0.000    0.000    0.000    0.000 _form.py:1228(_totally_ordered_pairs)
+        3    0.000    0.000    0.000    0.000 copy.py:113(_copy_with_constructor)
+        3    0.000    0.000    0.000    0.000 _weakrefset.py:83(add)
+        1    0.000    0.000    0.000    0.000 _form.py:1900(add_to_form)
+        9    0.000    0.000    0.000    0.000 _abcoll.py:26(<genexpr>)
+        1    0.000    0.000    0.000    0.000 _form.py:1494(__init__)
+        2    0.000    0.000    0.000    0.000 _sgmllib_copy.py:390(handle_endtag)
+        1    0.000    0.000    0.000    0.000 _form.py:762(close)
+       42    0.000    0.000    0.000    0.000 _form.py:744(unescape_attr_if_required)
+        3    0.000    0.000    0.000    0.000 cookielib.py:930(set_ok_version)
+        1    0.000    0.000    0.000    0.000 _form.py:1536(__setattr__)
+       13    0.000    0.000    0.000    0.000 _form.py:1971(__setattr__)
+        7    0.000    0.000    0.000    0.000 _form.py:1050(_get_label)
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:20(__enter__)
+        7    0.000    0.000    0.000    0.000 Parser.py:458(__init__)
+        8    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 genericpath.py:85(_splitext)
+        3    0.000    0.000    0.000    0.000 cookielib.py:957(set_ok_name)
+        1    0.000    0.000    0.000    0.000 _form.py:1797(_set_selected_state)
+        1    0.000    0.000    0.000    0.000 _weakrefset.py:36(__init__)
+        1    0.000    0.000    0.000    0.000 _mechanize.py:412(forms)
+        6    0.000    0.000    0.000    0.000 _form.py:187(isstringlike)
+        1    0.000    0.000    0.000    0.000 _form.py:2133(_totally_ordered_pairs)
+        1    0.000    0.000    0.000    0.000 _form.py:2354(_totally_ordered_pairs)
+        3    0.000    0.000    0.000    0.000 sre_parse.py:710(literal)
+        1    0.000    0.000    0.000    0.000 _strptime.py:176(TimeRE)
+        1    0.000    0.000    0.000    0.000 idna.py:146(Codec)
+       14    0.000    0.000    0.000    0.000 {method 'has_key' of 'dict' objects}
+        7    0.000    0.000    0.000    0.000 {issubclass}
+        1    0.000    0.000    0.000    0.000 _sgmllib_copy.py:112(close)
+        1    0.000    0.000    0.000    0.000 _strptime.py:31(LocaleTime)
+        1    0.000    0.000    0.000    0.000 _html.py:31(__init__)
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:16(__init__)
+        1    0.000    0.000    0.000    0.000 _form.py:1508(get_labels)
+        1    0.000    0.000    0.000    0.000 rfc822.py:439(__contains__)
+        1    0.000    0.000    0.000    0.000 latin_1.py:13(Codec)
+        4    0.000    0.000    0.000    0.000 _form.py:2679(__getattr__)
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:52(_commit_removals)
+        3    0.000    0.000    0.000    0.000 sre_parse.py:210(isident)
+        2    0.000    0.000    0.000    0.000 {method 'tostring' of 'array.array' objects}
+        1    0.000    0.000    0.000    0.000 rfc822.py:403(__delitem__)
+        1    0.000    0.000    0.000    0.000 idna.py:231(IncrementalDecoder)
+        3    0.000    0.000    0.000    0.000 cookielib.py:1036(set_ok_port)
+        7    0.000    0.000    0.000    0.000 _sgmllib_copy.py:449(handle_comment)
+        3    0.000    0.000    0.000    0.000 _html.py:37(__call__)
+        2    0.000    0.000    0.000    0.000 _form.py:1960(__getattr__)
+        1    0.000    0.000    0.000    0.000 idna.py:197(IncrementalEncoder)
+        1    0.000    0.000    0.000    0.000 {method '__getitem__' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 latin_1.py:28(StreamWriter)
+        1    0.000    0.000    0.000    0.000 _urllib2_fork.py:189(get_data)
+        2    0.000    0.000    0.000    0.000 {method '__subclasses__' of 'type' objects}
+        1    0.000    0.000    0.000    0.000 {thread.allocate_lock}
+        1    0.000    0.000    0.000    0.000 latin_1.py:24(IncrementalDecoder)
+        1    0.000    0.000    0.000    0.000 _form.py:398(end_body)
+        2    0.000    0.000    0.000    0.000 {method 'remove' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 latin_1.py:34(StreamConverter)
+        1    0.000    0.000    0.000    0.000 _form.py:1531(__getattr__)
+        1    0.000    0.000    0.000    0.000 _form.py:1924(fixup)
+        5    0.000    0.000    0.000    0.000 _strptime.py:212(<genexpr>)
+        1    0.000    0.000    0.000    0.000 idna.py:274(StreamReader)
+        1    0.000    0.000    0.000    0.000 latin_1.py:20(IncrementalEncoder)
+        1    0.000    0.000    0.000    0.000 idna.py:271(StreamWriter)
+        7    0.000    0.000    0.000    0.000 _form.py:563(_add_label)
+        2    0.000    0.000    0.000    0.000 calendar.py:50(<lambda>)
+        6    0.000    0.000    0.000    0.000 _form.py:1123(fixup)
+        1    0.000    0.000    0.000    0.000 latin_1.py:31(StreamReader)
+        1    0.000    0.000    0.000    0.000 _urllib2_fork.py:232(get_origin_req_host)
+        1    0.000    0.000    0.000    0.000 _form.py:2346(is_of_kind)
+        1    0.000    0.000    0.000    0.000 _form.py:1683(is_of_kind)
+        3    0.000    0.000    0.000    0.000 _form.py:1273(is_of_kind)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+

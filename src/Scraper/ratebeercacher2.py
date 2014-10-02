@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-from __builtin__ import str
 
+import cProfile
+import pstats
+
 from Parser import Parser
 from Scraper import Scraper
 
@@ -30,8 +33,13 @@ beerParser.limitLocations(set([u'New Jersey', u'New Mexico', u'New York', u'Nort
 beerScraper.login(accounts[2][0], accounts[2][2],
                   'http://www.ratebeer.com/login.asp',
                   'signin', 'http://www.ratebeer.com')
-
-beerData = beerParser.parseContinents('http://www.ratebeer.com/breweries/')
+profile_filename = 'Modeler.DBLoad_profile.txt'
+cProfile.run('beerParser.parseContinents("http://www.ratebeer.com/breweries/")', profile_filename)
+statsfile = open("profile_stats.txt", "wb")
+p = pstats.Stats(profile_filename, stream=statsfile)
+stats = p.strip_dirs().sort_stats('cumulative')
+stats.print_stats()
+statsfile.close()
 
 #  Now let's get some beers from a brewery
 #  I can get:

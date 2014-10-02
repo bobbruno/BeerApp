@@ -5,6 +5,7 @@ Created on 18/09/2014
 '''
 
 import bs4
+import csv
 import datetime
 import itertools
 
@@ -16,8 +17,10 @@ class WrongBeer(Exception):
     def __init__(self, beerId, wrongId):
         """
         Defines the exception values.
-        :param int beerId: the expected beer Id
-        :param int wrongId: the beer Id supplied
+        :param beerId: the expected beer Id
+        :type beerId: int
+        :param wrongId: the beer Id supplied
+        :type wrongId: int
         """
         self.beerId = beerId
         self.wrongId = wrongId
@@ -40,8 +43,10 @@ class City(object):
     def __init__(self, city, cityName):
         """
         Initializes the city object.
-        :param int city: Unique id of the city
-        :param str cityName: name of the city
+        :param city: Unique id of the city
+        :type city: int
+        :param cityName: name of the city
+        :type cityName: str
         """
         self.id = City.nCities
         City.nCities += 1
@@ -73,28 +78,47 @@ class Beer(object):
                  seasonality=None, availTap='unknown', distribScope='unknown'):
         """
         Initializes the beer object
-        :param int beerId: Unique identifier of the beer
-        :param str beerName: Name of the beer
-        :param Brewer brewer: Brewery that crafts the beer.
-        :param str URL: URL for the beer details' landing page
-        :param int styleId: Id for the beer style
-        :param str styleName: Name of the beer style
-        :param float abv:
-        :param int IBU:
-        :param int calories:
-        :param list glasses:
-        :param float avgRate:
-        :param float overPerf:
-        :param float stylePerf:
-        :param int nRatings:
-        :param City city:
-        :param str availBottle:
-        :param str  seasonality:
-        :param str availTap:
-        :param str distribScope:
+        :param beerId: Unique identifier of the beer
+        :type beerId: int
+        :param beerName: Name of the beer
+        :type beerName: str
+        :param brewer: Brewery that crafts the beer.
+        :type brewer: Brewer
+        :param URL: URL for the beer details' landing page
+        :type URL: str
+        :param styleId: Id for the beer style
+        :type styleId: int
+        :param styleName: Name of the beer style
+        :type styleName: str
+        :param abv:
+        :type abv: float
+        :param IBU:
+        :type IBU: int
+        :param calories:
+        :type calories: int
+        :param glasses:
+        :type glasses: list
+        :param avgRate:
+        :type avgRate: float
+        :param overPerf:
+        :type overPerf: float
+        :param stylePerf:
+        :type stylePerf: float
+        :param nRatings:
+        :type nRatings: int
+        :param city:
+        :type city: City
+        :param availBottle:
+        :type availBottle: str
+        :param  seasonality:
+        :type  seasonality: str
+        :param availTap:
+        :type availTap: str
+        :param distribScope:
+        :type distribScope: str
         """
         self.id = beerId
-        self.name = beerName
+        self.name = beerName.replace('"', '""').replace("'", "''")
         self.brewer = brewer
         self.URL = URL
         self.styleId = styleId
@@ -103,9 +127,9 @@ class Beer(object):
             if city.id not in cityCollection:
                 cityCollection[city.id] = city
         self.city = city
-        self.abv = abv
-        self.IBU = IBU
-        self.calories = calories
+        self.abv = abv if abv != 'None' else None
+        self.IBU = IBU if IBU != 'None' else None
+        self.calories = calories if calories != 'None' else None
         for g in glasses:
             if g.id not in glassCollection:
                 glassCollection[g.id] = g
@@ -127,12 +151,13 @@ class Beer(object):
         self.overPerf = overPerf
         self.stylePerf = stylePerf
         self.nRatings = nRatings
+        self.distrScope = distribScope
         self.ratings = []
 
     def __str__(self):
         return (u'{cont},{count},{loc},{brew},{bId},"{bName}",{bStyle},"{bStyleName}",{city},'
                 u'{bAbv},{bIBU},{bNCals},{bavBot},{bavTap},{season},{bOvrlRt},{bAvg},'
-                u'{bStyleRt},{bNRatings}').format(
+                u'{bStyleRt},{bNRatings},"{bDistrScope}"').format(
                     cont=self.brewer.location.country.continent.id,
                     count=self.brewer.location.country.id,
                     bStyleName=self.styleName,
@@ -142,16 +167,17 @@ class Beer(object):
                     bStyleRt=self.stylePerf, bIBU=self.IBU,
                     bavBot=self.availBottle, bavTap=self.availTap,
                     bNRatings=self.nRatings, bNCals=self.calories,
-                    city=self.city, season=self.seasonality, bStyle=self.styleId)
+                    city='None,None' if self.city is None else self.city,
+                    season=self.seasonality, bStyle=self.styleId, bDistrScope=self.distrScope)
 
     def __repr__(self):
         return u'{bId}'.format(self.id)
 
     @staticmethod
     def fileHead():
-        return (u'Continent,Country,Location,Brewery,BeerId,BeerName,BeerStyle,CityId,CityName,'
+        return (u'Continent,Country,Location,Brewery,BeerId,BeerName,BeerStyle,"Style Name",CityId,CityName,'
                 u'ABV,IBU,NCals,AvailBottle,AvailTap,Seasonal,OveralllRating,BayesianAvg,'
-                u'StyleRating,NRatings')
+                u'StyleRating,NRatings,"Distr. Scope"')
 
     def getRatings(self):
         for r in self.ratings:
@@ -164,7 +190,8 @@ class Beer(object):
     def addRating(self, rating):
         """
         Adds a rating object to the dictionary of ratings.
-        :param UserRating rating: the rating.
+        :param rating: the rating.
+        :type rating: UserRating
         """
         if rating.beer is None:
             rating.beerId = self.id
@@ -176,17 +203,28 @@ class Beer(object):
     def rate(self, userId, userName, final, aroma, appearance, taste, palate, overall, location, date, notes):
         """float
         Creates a user rating for the beer based on the raw information passed.
-        :param int userId: Id# of the user
-        :param str userName: Text identifier of the user
-        :param float final: Aggregate score for the user, between 0 and 5.
-        :param int aroma: user rating for the aroma rating, between 0 and 10.
-        :param int appearance: user rating for the appearance rating, between 0 and 5.
-        :param int taste: user rating for the taste rating, between 0 and 10.
-        :param int palate: user rating for the palate rating, between 0 and 5.
-        :param int overall: user rating for the overall rating, between 0 and 20.
+        :param userId: Id# of the user
+        :type userId: int
+        :param userName: Text identifier of the user
+        :type userName: str
+        :param final: Aggregate score for the user, between 0 and 5.
+        :type final: float
+        :param aroma: user rating for the aroma rating, between 0 and 10.
+        :type aroma: int
+        :param appearance: user rating for the appearance rating, between 0 and 5.
+        :type appearance: int
+        :param taste: user rating for the taste rating, between 0 and 10.
+        :type taste: int
+        :param palate: user rating for the palate rating, between 0 and 5.
+        :type palate: int
+        :param overall: user rating for the overall rating, between 0 and 20.
+        :type overall: int
         :param location: location of the user (or the rating, not sure).
-        :param datetime.date date: date of the rating.
-        :param str notes: text notes of the rating.
+        :type location: undef
+        :param date: date of the rating.
+        :type date: datetime.date
+        :param notes: text notes of the rating.
+        :type notes: str
         """
         self.addRating(UserRating(self.id, userId, userName,
                                   final, aroma, appearance, taste,
@@ -198,18 +236,30 @@ class UserRating(object):
                  taste, palate, overall, location, date, notes):
         """
         Creates a record of a user rating for a specific beer
-        :param Beer beer: The Beer
-        :param int userId: Id# of the user
-        :param str userName: Text identifier of the user
-        :param float final: Aggregate score for the user, between 0 and 5.
-        :param int aroma: user rating for the aroma rating, between 0 and 10.
-        :param int appearance: user rating for the appearance rating, between 0 and 5.
-        :param int taste: user rating for the taste rating, between 0 and 10.
-        :param int palate: user rating for the palate rating, between 0 and 5.
-        :param int overall: user rating for the overall rating, between 0 and 20.
+        :param beer: The Beer
+        :type beer: Beer
+        :param userId: Id# of the user
+        :type userId: int
+        :param userName: Text identifier of the user
+        :type userName: str
+        :param final: Aggregate score for the user, between 0 and 5.
+        :type final: float
+        :param aroma: user rating for the aroma rating, between 0 and 10.
+        :type aroma: int
+        :param appearance: user rating for the appearance rating, between 0 and 5.
+        :type appearance: int
+        :param taste: user rating for the taste rating, between 0 and 10.
+        :type taste: int
+        :param palate: user rating for the palate rating, between 0 and 5.
+        :type palate: int
+        :param overall: user rating for the overall rating, between 0 and 20.
+        :type overall: int
         :param location: location of the user (or the rating, not sure).
-        :param datetime.date date: date of the rating.
-        :param str notes: text notes of the rating.
+        :type location: undef
+        :param date: date of the rating.
+        :type date: datetime.date
+        :param notes: text notes of the rating.
+        :type notes: str
         """
         self.beer = beer
         self.id = userId
@@ -222,13 +272,13 @@ class UserRating(object):
         self.overall = overall
         self.location = location
         self.date = date
-        self.notes = notes
+        self.notes = notes.replace('"', '\\"').replace("'", "\\'").replace('\n', ' ').replace('\r', ' ')
 
     def __str__(self):
         #  TODO: Deal with location formatting. Right now it's probably useless
         #  TODO: Implement notes processing to avoid quote problems
         #  TODO: Format date
-        return (u'{beerId},{userId},{userName},{compound},'
+        return (u'{beerId},{userId},"{userName}",{compound},'
                 u'{aroma},{appearance},{taste},{palate},'
                 u'{overall},"{location}","{date}","{notes}"').format(
                     beerId=self.beer.id, userId=self.id, userName=self.name,
@@ -239,26 +289,33 @@ class UserRating(object):
 
     @staticmethod
     def fileHead():
-        return (u'beerId,userId,userName,compound,'
+        return (u'beerId,userId,"userName",compound,'
                 u'aroma,appearance,taste,palate,'
-                u'overall,location,date,notes')
+                u'overall,"location","date","notes"')
 
 
 class Brewery(object):
-    def __init__(self, location, breweryId, breweryName, breweryType=None, yearEstablish=None, bURL=None):
+    def __init__(self, location, breweryId, breweryName, breweryType=None, NBeers=0, yearEstablish=None, bURL=None):
         """
         Initializes the brewery object.
-        :param Location location: location of the brewery.
-        :param int breweryId: Unique id of the brewery.
-        :param str breweryName: Name of the brewery.
-        :param str breweryType: type of brewery.
-        :param int yearEstablish: Year the brewery was established.
-        :param str bURL: URL for the brewery
+        :param location: location of the brewery.
+        :type location: Location
+        :param breweryId: Unique id of the brewery.
+        :type breweryId: int
+        :param breweryName: Name of the brewery.
+        :type breweryName: str
+        :param breweryType: type of brewery.
+        :type breweryType: str
+        :param yearEstablish: Year the brewery was established.
+        :type yearEstablish: int
+        :param bURL: URL for the brewery
+        :type bURL: str
         """
         self.location = location
         self.id = breweryId
         self.name = breweryName
         self.bType = breweryType
+        self.nBeers = NBeers
         self.yEstb = yearEstablish
         #  TODO: Get this back to bURL. Did change to reuse cache.
         self.URL = '/brewers/x/{}/'.format(breweryId)
@@ -266,9 +323,14 @@ class Brewery(object):
 
     def __str__(self):
         return (u'{contId},{cId},{lId},{bId},"{bName}","{bType}",{nBeers},{yEst}').format(
-                    contId=self.location.country.continent.id, cId=self.location.country.id,
-                    lId=self.location.id, bId=self.id, bName=self.name, bType=self.bType,
-                    nBeers=len(self.Beers.keys()), yEst=self.yEstb)
+                    contId=self.location.country.continent.id,
+                    cId=self.location.country.id,
+                    lId=self.location.id,
+                    bId=self.id,
+                    bName=self.name,
+                    bType=self.bType,
+                    nBeers=len(self.Beers.keys()),
+                    yEst=self.yEstb)
 
     def __repr__(self):
         return u'{bId}'.format(bId=self.id)
@@ -280,24 +342,29 @@ class Brewery(object):
     def addBeer(self, beer):
         """
         Adds a beer to the brewery.
-        :param Beer beer: the beer object.
+        :param beer: the beer object.
+        :type beer: Beer
         """
         self.Beers[beer.id] = beer
         beer.brewer = self
 
     @staticmethod
     def fileHead():
-        return u'Continent,Country,Location,id,Brewery,Brewery Type,NBeers,EstYear'
+        return u'Continent,Country,Location,id,"Brewery","Brewery Type",NBeers,EstYear'
 
 
 class Location(object):
     def __init__(self, country, locationId, locationName, locationURL):
         """
         Initializes the location object.
-        :param Country country: Country where the location is
-        :param int locationId: Unique id of the location
-        :param str locationName: Name of the location
-        :param str locationURL: URL of the location, without the http://www.ratebeer.com/part
+        :param country: Country where the location is
+        :type country: Country
+        :param locationId: Unique id of the location
+        :type locationId: int
+        :param locationName: Name of the location
+        :type locationName: str
+        :param locationURL: URL of the location, without the http://www.ratebeer.com/part
+        :type locationURL: str
         """
         self.country = country
         self.id = locationId
@@ -306,7 +373,7 @@ class Location(object):
         self.breweries = {}
 
     def __str__(self):
-        return u'{contId},{cId},{lId},{lName}'.format(contId=self.country.continent.id,
+        return u'{contId},{cId},{lId},"{lName}"'.format(contId=self.country.continent.id,
                                                       cId=self.country.id, lId=self.id,
                                                       lName=self.name)
 
@@ -321,11 +388,17 @@ class Location(object):
         """
         Adds a brewery to the location. If a brewery of the same id already existed, it will be OVERWRITTEN.
         :param brewery: either a Brewery object or an int representing the country id.
-        :param str bName: if a Brewery object is passed, should not be specified. Otherwise, the brewery's name.
-        :param str bType: if a Brewery object is passed, should not be specified. Otherwise, the brewery's type.
+        :type brewery: int or Brewery
+        :param bName: if a Brewery object is passed, should not be specified. Otherwise, the brewery's name.
+        :type bName: str
+        :param bType: if a Brewery object is passed, should not be specified. Otherwise, the brewery's type.
+        :type bType: str
         :param yEstab: Brewery object is passed, should not be specified. Otherwise, the brewery's 
+        :type yEstab: int
         :param country: either a Country object or an int representing the country id.
-        :param str countryName: if a country object is passed, should not be specified. Otherwise, it's the country's name.
+        :type country: object
+        :param countryName: if a country object is passed, should not be specified. Otherwise, it's the country's name.
+        :type countryName: str
         """
         if type(brewery) == int:
             if bName is None:
@@ -337,16 +410,19 @@ class Location(object):
 
     @staticmethod
     def fileHead():
-        return (u'Continent,Country,id,Location')
+        return (u'Continent,Country,id,"Location"')
 
 
 class Country(object):
     def __init__(self, continent, countryId, countryName):
         """
         Initializes the country object.
-        :param Continent continent: Parent continent
-        :param int countryId:
+        :param continent: Parent continent
+        :type continent: Continent
+        :param countryId:
+        :type countryId: int
         :param countryName:
+        :type countryName: str
         """
         self.continent = continent
         self.id = countryId
@@ -354,7 +430,7 @@ class Country(object):
         self.locations = {}
 
     def __str__(self):
-        return u'{contId},{cId},{cName}'.format(contId=self.continent.id,
+        return u'{contId},{cId},"{cName}"'.format(contId=self.continent.id,
                                                 cId=self.id, cName=self.name)
 
     def __repr__(self):
@@ -366,9 +442,13 @@ class Country(object):
 
     def addLocation(self, location, locationName=None, locationURL=None):
         """
-        Adds a country to the continent. if a country of the same id already existed, it will be OVERWRITTEN.
-        :param country: either a Country object or and int representing the country id.
-        :param str countryName: if a country object is passed, should not be specified. Otherwise, it's the countrie's name.
+        Adds a location to the country. if a location of the same id already existed, it will be OVERWRITTEN.
+        :param location: either a location object or and int representing the location id.
+        :type location: object
+        :param locationName: if a location object is passed, should not be specified. Otherwise, it's the location's name.
+        :type locationName: str
+        :param locationURL: the URL to the location's page.
+        :type locationURL: str
         """
         if type(location) == int:
             if locationName is None:
@@ -380,22 +460,24 @@ class Country(object):
 
     @staticmethod
     def fileHead():
-        return (u'Continent,id,Country')
+        return (u'Continent,id,"Country"')
 
 
 class Continent(object):
     def __init__(self, contId, contName):
         """
         Initializes the continent
-        :param int contId: unique id of the continent
-        :param str contName: Name of the continent
+        :param contId: unique id of the continent
+        :type contId: int
+        :param contName: Name of the continent
+        :type contName: str
         """
         self.id = contId
         self.name = contName
         self.countries = {}
 
     def __str__(self):
-        return u'{cId},{cName}'.format(cId=self.id, cName=self.name)
+        return u'{cId},"{cName}"'.format(cId=self.id, cName=self.name)
 
     def __repr__(self):
         return u'{cId}'.format(cId=self.id)
@@ -408,7 +490,9 @@ class Continent(object):
         """
         Adds a country to the continent. if a country of the same id already existed, it will be OVERWRITTEN.
         :param country: either a Country object or and int representing the country id.
-        :param str countryName: if a country object is passed, should not be specified. Otherwise, it's the countrie's name.
+        :type country: int or Country
+        :param countryName: if a country object is passed, should not be specified. Otherwise, it's the countrie's name.
+        :type countryName: str
         """
         if type(country) == int:
             if countryName is None:
@@ -420,7 +504,7 @@ class Continent(object):
 
     @staticmethod
     def fileHead():
-        return (u'id,Continent')
+        return (u'id,"Continent"')
 
 
 class Parser(object):
@@ -430,10 +514,14 @@ class Parser(object):
     def __init__(self, scraper, loc='./', initFiles=True, verbose=False):
         """
         Constructor for the class
-        :param Scraper scraper: scraper to use to get the site pages
-        :param str fLocation: location to create the csv files
-        :param bool initFiles: Should the csv files be initialized ?
-        :param bool verbose: Should the progress be printed ?
+        :param scraper: scraper to use to get the site pages
+        :type scraper: Scraper
+        :param fLocation: location to create the csv files
+        :type fLocation: str
+        :param initFiles: Should the csv files be initialized ?
+        :type initFiles: bool
+        :param verbose: Should the progress be printed ?
+        :type verbose: bool
         """
         self.fLocation = loc
         self.scraper = scraper
@@ -480,15 +568,15 @@ class Parser(object):
     def parseBeerDetails(self, beerURL):
         """
         Parses all the details and ratings for one specific beer.
-
-        :param Beer beer: beer object being parsed.
-        :param str beerURL: beer's landing page.
+        :param beerURL: beer's landing page.
+        :type beerURL: str
         :rtype Beer
         """
         def getHeader(beerPage):
             """
             Processes the header of the beer page, getting the beer's info.
-            :param bs4.Tag beerPage: the beer's page contents
+            :param beerPage: the beer's page contents
+            :type beerPage: bs4.Tag
             :rtype Beer
             """
             beerId = int(beerURL.split('/')[-2])
@@ -577,7 +665,8 @@ class Parser(object):
         def getRatings(beerPg):
             """
             Gets the ratings from the table at XPath '//*[@id="container"]/span/table/tbody/tr[2]/td[2]/div/table[3]'
-            :param Tag beerPg: the beer page itself
+            :param beerPg: the beer page itself
+            :type beerPage: bs4.Tag
             """
             currTag = beerPg.body.findChild('td', {'id': 'tdL'}).next_sibling
             currTag = currTag.contents[0].findChild('table',
@@ -624,24 +713,33 @@ class Parser(object):
                 #  Go to the next line, if there's one
                 currTag2 = currTag2.next_sibling.next_sibling
 
-        beerHTML = self.scraper.getSite(u'http://www.ratebeer.com{}'.format(unicode(beerURL)))
-        beerPage = bs4.BeautifulSoup(beerHTML)
-        #  Get beer header information
         try:
+            beerHTML = self.scraper.getSite(u'http://www.ratebeer.com{}'.format(unicode(beerURL)))
+            beerPage = bs4.BeautifulSoup(beerHTML)
+            #  Get beer header information
             theBeer = getHeader(beerPage.html.body)
+            if theBeer.overPerf is None:
+                raise ValueError
         except:
             return None
-        self._currBeer = theBeer
+        previousBeer, self._currBeer = self._currBeer, theBeer
         if (not len(self._countriesToRate) or
                 self._currCountry.name in self._countriesToRate):
-            getRatings(beerPage)
+            try:
+                getRatings(beerPage)
+            except:
+                self._currBeer = previousBeer
             #  Check if there are more rating pages
             #  //*[@id="container"]/span/table/tbody/tr[2]/td[2]/div
             currTag = beerPage.html.body.findChild('div', id='container').contents[3].contents[0].contents[2].contents[1].contents[0]
             for currTag2 in currTag.findChildren('a', recursive=False):
                 beerHTML = self.scraper.getSite(u'http://www.ratebeer.com{}'.format(unicode(currTag2.attrs['href'])))
                 beerPg2 = bs4.BeautifulSoup(beerHTML)
-                getRatings(beerPg2)
+                try:
+                    getRatings(beerPg2)
+                except:
+                    self._currBeer = previousBeer
+                    return None
             with open('{}/ratings.csv'.format(self.fLocation), 'a') as fReviews:
                 for r in theBeer.getRatings():
                     fReviews.write(u'{}\n'.format(unicode(r)).encode('utf8'))
@@ -652,7 +750,8 @@ class Parser(object):
         """
         Processes the brewer's information and returns a Brewery object with all underlying beers.
         Skips retired, once-in-a-lifetime beers and beers with less than 10 ratings.
-        :param int brURL: brewer's landing page
+        :param brURL: brewer's landing page
+        :type brURL: str
         :rtype Brewery
         """
         def processBeerRow(tag):
@@ -660,7 +759,7 @@ class Parser(object):
             Gets a Tag object with a row of beer data and returns a link
             for that beer's page if applicable. Retired beers or beers with
             less than 10 ratings should not be considered.
-            :param bs4.Tag tag: tag pointing to the line of data about the beer
+            :param tag: tag pointing to the line of data about the beer
             :rtype str
             """
             #  //*[@id="container"]/table/tbody/tr/td[2]/span/table[2]/tbody/tr[5]/td[2]/span
@@ -708,7 +807,8 @@ class Parser(object):
         Processes the location page and the brewers in int. Returns a Location
         object, which contains all active breweries under it. Assumes the
         location is under self._currCountry.
-        :param str location: the location's URL
+        :param locURL: the location's URL
+        :type locURL: str
         :rtype Location
         """
         def processLocRow(tag):
@@ -728,13 +828,13 @@ class Parser(object):
                 print u'\t\t\t Processing {}'.format(brewery).encode('utf8')
             brType = frCol.next_sibling
             brNBeer = brType.next_sibling
-            brEstDate = int(brNBeer.findNextSibling().findNextSibling().text)    #  @IgnorePep8
+            brEstDate = int(brNBeer.next_sibling.next_sibling.text)    #  @IgnorePep8
             theBrewery = Brewery(self._currLocation,
                                  int(brewerHTML.attrs['href'][9:].split('/')[1]),
-                                 brewery, brType.text, int(brEstDate),
+                                 brewery, brType.text, int(brNBeer.text), int(brEstDate),
                                  brewerHTML.attrs['href'])
             if self.verbose:
-                print self._currCont.id, self._currCountry.id, self._currLocation.id, \
+                print self._currCont.id, self.findNextSibling_currCountry.id, self._currLocation.id, \
                     theBrewery.id, theBrewery.name, \
                     theBrewery.bType, len(theBrewery.Beers.keys()), \
                     theBrewery.yEstb
@@ -766,8 +866,9 @@ class Parser(object):
     def parseContinents(self, initPage):
         """
         Parse the inicial continent page, returning everything as a dict of Continents.
-        :param str initPage: the recovered page to be parsed.
-        :rtype dict
+        :param initPage: the recovered page to be parsed.
+        :type initPage: str
+        :rtype dict of Continent
         """
         resposta = self.scraper.getSite(initPage)
         soup = bs4.BeautifulSoup(resposta)
@@ -812,7 +913,7 @@ class Parser(object):
 def robustConv(x, toType=float):
     """
     Converts an object to another type. Will return None when conversion fails.
-    :param x: the object to be converted
+    :param object x: the object to be converted
     :param type toType: the type to convert to
     """
     try:
