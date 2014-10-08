@@ -29,14 +29,14 @@ import sys
 from Scraper.Parser import Continent, Country, Location, Brewery, Beer, City, \
     UserRating
 
-from Modeler.dbBridge import dbContinent, dbCountry, dbLocation, dbBrewery, \
-    dbBeer, dBRating
+from Modeler.dbBridge import dBContinent, dBCountry, dBLocation, dBBrewery, \
+    dBBeer, dBRating
 
 
 __all__ = []
 __version__ = 0.1
 __date__ = '2014-09-25'
-__updated__ = '2014-10-02'
+__updated__ = '2014-10-07'
 
 DEBUG = 0
 TESTRUN = 0
@@ -72,7 +72,7 @@ def main(argv=None):
         parser.add_option("-H", "--host", dest="host", default="localhost", help="set host name of database [default: %default]", metavar="HOST")
         parser.add_option("-p", "--port", dest="port", default=5432, help="set connection port of database [default: %default]", metavar="PORT")
         parser.add_option("-d", "--destDB", dest="destDb", default="BeerDb", help="set destination Database [default: %default]", metavar="DB")
-        parser.add_option("-v", "--verbose", dest="verbose", action="count", default=0, help="set verbosity level [default: %default]")
+        parser.add_option("-v", "--verbose", dest="verbose", action="count", default=2, help="set verbosity level [default: %default]")
         parser.add_option("-t", "--truncate", dest="truncate", action="store_true", default=True, help="truncate tables on the destination tablespace ? [default: %default]")
         parser.add_option("-U", "--user", dest="userName", action="store", default="BeerApp", help="set username for connecting to the database [default: %default]", metavar="LOGIN")
         parser.add_option("-P", "--password", dest="password", action="store", help="set password for connecting to the database", metavar="PASSWD")
@@ -96,11 +96,11 @@ def main(argv=None):
                                 password=opts.password, host=opts.host,
                                 port=opts.port, cursor_factory=psycopg2.extras.DictCursor)
 
-        Conts = dbContinent(conn, opts.truncate)
-        Countries = dbCountry(conn, Conts, opts.truncate)
-        Locations = dbLocation(conn, Countries, opts.truncate)
-        Breweries = dbBrewery(conn, Locations, opts.truncate)
-        Beers = dbBeer(conn, Breweries, opts.truncate)
+        Conts = dBContinent(conn, opts.truncate)
+        Countries = dBCountry(conn, Conts, opts.truncate)
+        Locations = dBLocation(conn, Countries, opts.truncate)
+        Breweries = dBBrewery(conn, Locations, opts.truncate)
+        Beers = dBBeer(conn, Breweries, opts.truncate)
         Ratings = dBRating(conn, Beers, opts.truncate)
 
         #  Load continents
@@ -194,8 +194,8 @@ def main(argv=None):
                 try:
                     theBeer = Beer(int(row[4]), row[5], Breweries[int(row[3])], '', int(row[6]), row[7], nvl(row[10], float),
                                    nvl(row[11], int), nvl(row[12], float), [], nvl(row[17], float), nvl(row[16], float),
-                                   nvl(row[18], float), nvl(row[19], float), City(nvl(row[8], int), row[9]), row[13] == 'True',
-                                   row[15], row[14] == 'True', '')
+                                   nvl(row[18], float), nvl(row[19], float), City(nvl(row[8], int), row[9]), row[13],
+                                   row[15], row[14], '')
                     Beers[theBeer.id] = theBeer
                 except Exception as e:
                     print row

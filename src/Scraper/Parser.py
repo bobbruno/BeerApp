@@ -136,13 +136,13 @@ class Beer(object):
         self.glasses = glasses
         if availBottle == 'unknown':
             self.availBottle = None
-        elif availBottle in set(['available', 'common']):
+        elif availBottle in set(['available', 'common', 'True']):
             self.availBottle = True
         else:
             self.availBottle = False
         if availTap == 'unknown':
             self.availTap = None
-        elif availTap in set(['available', 'common']):
+        elif availTap in set(['available', 'common', 'True']):
             self.availTap = True
         else:
             self.availTap = False
@@ -701,7 +701,7 @@ class Parser(object):
                 userId = currTag3.attrs['href'].split('/')[-2]    #  User id (I may need it for training)
                 userName = currTag3.text.split()[0]
                 currTag3 = currTag3.next_sibling
-                rateLoc = currTag3.split('-')[1].strip()
+                rateLoc = currTag3.split(' - ')[1].strip()
                 rateDate = datetime.datetime.strptime(currTag3.split('-')[-1].strip(), "%b %d, %Y")    #  TODO: Check if locale will cause problems here
                 currTag2 = currTag2.next_sibling.next_sibling    #  Moving to the notes
                 rateNotes = currTag2.text    #  TODO: Check what kinds of characters I need to process in order to avoid problems. Maybe encapsulate in the object.
@@ -918,7 +918,7 @@ def robustConv(x, toType=float):
     """
     try:
         y = toType(x)
-    except ValueError:
+    except:
         y = None
     finally:
         return y

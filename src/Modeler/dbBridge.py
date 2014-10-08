@@ -7,8 +7,7 @@ Created on 25/09/2014
 
 import psycopg2
 
-from Parser import Brewery
-from Scraper.Parser import Continent, Country, Location, Beer, City, UserRating
+from Scraper.Parser import Continent, Country, Location, Brewery, Beer, City, UserRating, robustConv
 
 
 #  TODO: Review this code. If I used currItem instead of currCont, currCountry, etc, I could probably have much simpler objects.
@@ -25,7 +24,7 @@ class DuplicateValue(Exception):
         return u'Duplicate {} value: Id {} assigned to "{}" is already assigned to "{}'.format(self.objType, self.id, self.name, self.origName)
 
 
-class dbContinent(dict):
+class dBContinent(dict):
     '''
     Generates a python dict representation of continents table in the database.
     '''
@@ -128,11 +127,11 @@ class dbContinent(dict):
         """
         cur = self.dbConn.cursor()
         if type(param == int):
-            cur.execute('SELECT CONT_ID, CONT_NAME FROM TB_CONTINENT '
-                        ' WHERE CONT_ID = %s;', (param,))
+            cur.execute('SELECT "CONT_ID", "CONT_NAME" FROM TB_CONTINENT '
+                        ' WHERE "CONT_ID" = %s;', (param,))
         elif type(param == str):
-            cur.execute("SELECT CONT_ID, CONT_NAME FROM TB_CONTINENT "
-                        " WHERE CONT_NAME = '%s';", (param,))
+            cur.execute('SELECT "CONT_ID", "CONT_NAME" FROM TB_CONTINENT '
+                        " WHERE \"CONT_NAME\" = '%s';", (param,))
         else:
             raise ValueError
         try:
@@ -141,8 +140,26 @@ class dbContinent(dict):
             self.dbConn.commit()
             raise KeyError
         theCont = Continent(int(theCont[0]), theCont[1])
-        self.dbConn.commit()
         return theCont
+
+
+class dBRatingIterator(object):
+    def __init__(self, iterable):
+        self.position = -1
+        self.iterable = iterable
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        self.position += 1
+        if self.position > len(self.iterable):
+            raise StopIteration
+        try:
+            x = unicode(self.iterable.__getitem__(self.position).notes.decode('utf8'))
+            return x
+        except KeyError:
+            raise StopIteration
 
 
 class dBRating(list):
@@ -150,7 +167,7 @@ class dBRating(list):
     Generates a python list representation of ratings table in the database.
     '''
 
-    def __init__(self, dB, beers, truncate=False, persist=True, upSert=True, blocksize=1000, *args):
+    def __init__(self, dB, beers, truncate=False, persist=True, upSert=True, blocksize=1000, nLimit=None, *args):
         """ Initializes the manager for a tb_beer table (which behaves as a dict of beers as well).
         :param dB: the database connection to be used
         :type dB: psycopg2.connection
@@ -167,6 +184,7 @@ class dBRating(list):
         :type blocksize: int
         """
         self.dbConn = dB
+        self.cur = None
         self.nWrites = 0
         self.blockSize = blocksize
         self.parents = beers
@@ -175,6 +193,7 @@ class dBRating(list):
         self.persist = persist
         #  : :type self.currItem: UserRating
         self.currItem = None
+        self.nLimit = nLimit
         if not self.tableExists():
             self.create()
         elif truncate:
@@ -186,6 +205,28 @@ class dBRating(list):
         if self.nWrites >= self.blockSize:
             self.dbConn.commit()
             self.nWrites = 0
+
+    def __len__(self, *args, **kwargs):
+        return self.count(self, *args, **kwargs)
+
+    def __iter__(self, *args, **kwargs):
+        for x in xrange(0, self.__len__()):
+            yield self.__getitem__(x)
+
+    def count(self, *args, **kwargs):
+        cur = self.dbConn.cursor()
+        cur.execute('SELECT count(*)'
+                    '   FROM TB_RATING ')
+        try:
+            theItem = cur.fetchone()
+        except psycopg2.ProgrammingError:
+            self.doCommit()
+            raise KeyError
+        if (self.nLimit is not None and
+                self.nLimit < theItem[0]):
+            return self.nLimit
+        else:
+            return theItem[0]
 
     def integrity(self, item=None):
         """
@@ -209,14 +250,14 @@ class dBRating(list):
         Retrieves a rating by key (index). Goes to the database if needed. Behaves just like a dict
         :param key: the beer id.
         :type key: int
+        :rtype: UserRating
         """
         if type(key) != int:
             raise TypeError('Key must be integer, was "{}"'.format(key))
         try:
             self.currItem = list.__getitem__(self, key)
-        except KeyError:
+        except IndexError:
             self.currItem = self.read(key)
-            list.__setitem__(self, key, self.currItem)
         self.integrity()
         return self.currItem
 
@@ -332,7 +373,10 @@ class dBRating(list):
         :type param: tuple
         """
         #  TODO: Check for repetition of the same rating. Possibly transform Ratings into a dict hashable from beer, user and date.
-        cur = self.dbConn.cursor()
+        if self.cur is None:
+            cur = self.dbConn.cursor(name='ratings')
+        else:
+            cur = self.cur
         if type(param) == tuple:
             cur.execute('SELECT "BEER_ID",'
                         '"USER_ID",'
@@ -348,24 +392,56 @@ class dBRating(list):
                         '"RATING_NOTES"'
                         '   FROM TB_RATING '
                         '   WHERE BEER_ID = %s AND USER_ID = %s AND RATING_DATE = %s;', param)
+        elif type(param) == int:
+            if self.cur is None:
+                self.cur = cur
+                self.cur.scrollable = False
+                self.cur.withhold = True
+                statement = 'SELECT "BEER_ID",'\
+                            '       "USER_ID",'\
+                            '       "USER_NAME",'\
+                            '       "RATING_COMPOUND",'\
+                            '       "RATING_AROMA",'\
+                            '       "RATING_APPEARANCE",'\
+                            '       "RATING_TASTE",'\
+                            '       "RATING_PALATE",'\
+                            '       "RATING_OVERALL",'\
+                            '       "RATING_LOCATION",'\
+                            '       "RATING_DATE",'\
+                            '       "RATING_NOTES"'\
+                            '   FROM TB_RATING '
+                if self.nLimit is not None:
+                    statement += ' LIMIT %s;'.format(self.nLimit)
+                    self.cur.execute(statement, (self.nLimit,))
+
+                else:
+                    statement += ';'
+                    self.cur.execute(statement)
         else:
             raise ValueError
         try:
-            theItem = cur.fetchone()
+            initialItem = None
+            for item in cur.fetchmany():
+                if int(item[0]) not in self.parents:
+                    theParent = self.parents.read(int(item[0]))
+                else:
+                    theParent = self.parents[int(item[0])]
+                theItem = UserRating(theParent, item[1], item[2], item[3],
+                                     item[4], item[5], item[6], item[7],
+                                     item[8], item[9], item[10], item[11])
+                if initialItem is None:
+                    initialItem = theItem
+                self.integrity(theItem)
+                list.append(self, theItem)
+            if initialItem is None:
+                raise psycopg2.ProgrammingError
         except psycopg2.ProgrammingError:
             self.doCommit()
             raise KeyError
-        if int(theItem[0]) not in self.parents:
-            theParent = self.parents.read(int(theItem[0]))
-        theItem = UserRating(theParent, theItem[1], theItem[2], theItem[3],
-                             theItem[4], theItem[5], theItem[6], theItem[7],
-                             theItem[8], theItem[9], theItem[10], theItem[11], theItem[12])
-        self.integrity(theItem)
-        self.doCommit()
-        return theItem
+        return initialItem
 
 
-class dbBeer(dict):
+class dBBeer(dict):
     '''
     Generates a python dict representation of beers table in the database.
     '''
@@ -582,26 +658,26 @@ class dbBeer(dict):
         """
         cur = self.dbConn.cursor()
         if type(param) == int:
-            cur.execute('SELECT CONT_ID, COUNTRY_ID, LOCATION_ID, BREWERY_ID,'
-                        '       BEER_ID,'
-                        '       BEER_NAME,'
-                        '       BEER_STYLE_ID,'
-                        '       BEER_STYLE_NAME,'
-                        '       BEER_CITY_ID,'
-                        '       BEER_CITY_NAME,'
-                        '       BEER_ABV,'
-                        '       BEER_IBU,'
-                        '       BEER_CALORIES,'
-                        '       BEER_AVAIL_BOTTLE,'
-                        '       BEER_AVAIL_TAP,'
-                        '       BEER_SEASONAL,'
-                        '       BEER_OVERALL_RATING,'
-                        '       BEER_AVG_RATING,'
-                        '       BEER_STYLE_RATING,'
-                        '       BEER_NRATINGS,'
-                        '       BEER_DISTRIBUTION'
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "LOCATION_ID", "BREWERY_ID",'
+                        '       "BEER_ID",'
+                        '       "BEER_NAME",'
+                        '       "BEER_STYLE_ID",'
+                        '       "BEER_STYLE_NAME",'
+                        '       "BEER_CITY_ID",'
+                        '       "BEER_CITY_NAME",'
+                        '       "BEER_ABV",'
+                        '       "BEER_IBU",'
+                        '       "BEER_CALORIES",'
+                        '       "BEER_AVAIL_BOTTLE",'
+                        '       "BEER_AVAIL_TAP",'
+                        '       "BEER_SEASONAL",'
+                        '       "BEER_OVERALL_RATING",'
+                        '       "BEER_AVG_RATING",'
+                        '       "BEER_STYLE_RATING",'
+                        '       "BEER_NRATINGS",'
+                        '       "BEER_DISTRIBUTION"'
                         '   FROM TB_BEER '
-                        '   WHERE BEER_ID = %s;', (param,))
+                        '   WHERE "BEER_ID" = %s;', (param,))
         elif type(param) == str:
             cur.execute('SELECT CONT_ID, COUNTRY_ID, LOCATION_ID, BREWERY_ID,'
                         '       BEER_ID,'
@@ -632,16 +708,19 @@ class dbBeer(dict):
             raise KeyError
         if int(theItem[3]) not in self.parents:
             theParent = self.parents.read(int(theItem[3]))
+        else:
+            theParent = self.parents[int(theItem[3])]
         #  TODO: I'm throwing away glass information. This could be important
-        theItem = Beer(int(theItem[4]), theItem[5], theParent, '', int(theItem[6]), theItem[7], float(theItem[10]),
-                       int(theItem[11]), float(theItem[12]), [], float(theItem[17]), float(theItem[16]), float(theItem[18]), float(theItem[19]),
+        theItem = Beer(int(theItem[4]), theItem[5], theParent, '', robustConv(theItem[6], int), theItem[7],
+                       robustConv(theItem[10], float), robustConv(theItem[11], int),
+                       robustConv(theItem[12], float), [], robustConv(theItem[17], float),
+                       robustConv(theItem[16], float), robustConv(theItem[18], float), robustConv(theItem[19], float),
                        City(int(theItem[8]), theItem[9]), theItem[13], theItem[15], theItem[14], theItem[20])
         self.integrity(theItem)
-        self.doCommit()
         return theItem
 
 
-class dbBrewery(dict):
+class dBBrewery(dict):
     '''
     Generates a python dict representation of breweries table in the database.
     '''
@@ -799,17 +878,17 @@ class dbBrewery(dict):
         """
         cur = self.dbConn.cursor()
         if type(param) == int:
-            cur.execute('SELECT CONT_ID, COUNTRY_ID, LOCATION_ID, BREWERY_ID,'
-                        '       BREWERY_NAME, BREWERY_TYPE, NUMBER_BEERS,'
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "LOCATION_ID", "BREWERY_ID",'
+                        '       "BREWERY_NAME", "BREWERY_TYPE", NUMBER_BEERS,'
                         '       YEAR_ESTABLISHED'
                         '   FROM TB_BREWERY '
-                        '   WHERE BREWERY_ID = %s;', (param,))
+                        '   WHERE "BREWERY_ID" = %s;', (param,))
         elif type(param) == str:
-            cur.execute('SELECT CONT_ID, COUNTRY_ID, LOCATION_ID, BREWERY_ID,'
-                        '       BREWERY_NAME, BREWERY_TYPE, NUMBER_BEERS,'
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "LOCATION_ID", "BREWERY_ID",'
+                        '       "BREWERY_NAME", "BREWERY_TYPE", NUMBER_BEERS,'
                         '       YEAR_ESTABLISHED'
                         '   FROM TB_BREWERY '
-                        "   WHERE BREWERY_NAME = '%s';", (param,))
+                        "   WHERE \"BREWERY_NAME\" = '%s';", (param,))
         else:
             raise ValueError
         try:
@@ -819,13 +898,14 @@ class dbBrewery(dict):
             raise KeyError
         if int(theItem[2]) not in self.parents:
             theParent = self.parents.read(int(theItem[2]))
+        else:
+            theParent = self.parents[int(theItem[2])]
         theItem = Brewery(theParent, int(theItem[3]), theItem[4], theItem[5], int(theItem[6]), int(theItem[7]))
         self.integrity(theItem)
-        self.doCommit()
         return theItem
 
 
-class dbLocation(dict):
+class dBLocation(dict):
     '''
     Generates a python dict representation of countries table in the database.
     '''
@@ -956,11 +1036,11 @@ class dbLocation(dict):
         """
         cur = self.dbConn.cursor()
         if type(param) == int:
-            cur.execute('SELECT CONT_ID, COUNTRY_ID, LOCATION_ID, LOCATION_NAME FROM TB_LOCATION '
-                        ' WHERE LOCATION_ID = %s;', (param,))
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "LOCATION_ID", "LOCATION_NAME" FROM TB_LOCATION '
+                        ' WHERE "LOCATION_ID" = %s;', (param,))
         elif type(param) == str:
-            cur.execute("SELECT CONT_ID, COUNTRY_ID, LOCATION_ID, LOCATION_NAME FROM TB_LOCATION "
-                        " WHERE LOCATION_NAME = '%s';", (param,))
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "LOCATION_ID", "LOCATION_NAME" FROM TB_LOCATION '
+                        " WHERE \"LOCATION_NAME\" = '%s';", (param,))
         else:
             raise ValueError
         try:
@@ -970,13 +1050,14 @@ class dbLocation(dict):
             raise KeyError
         if int(theLocation[1]) not in self.countries:
             theCountry = self.countries.read(int(theLocation[1]))
-        theLocation = Location(theCountry, int(theLocation[1]), theLocation[2], '')
+        else:
+            theCountry = self.countries[int(theLocation[1])]
+        theLocation = Location(theCountry, int(theLocation[2]), theLocation[3], '')
         self.integrity(theLocation)
-        self.dbConn.commit()
         return theLocation
 
 
-class dbCountry(dict):
+class dBCountry(dict):
     '''
     Generates a python dict representation of countries table in the database.
     '''
@@ -1103,11 +1184,11 @@ class dbCountry(dict):
         """
         cur = self.dbConn.cursor()
         if (type(param) == int):
-            cur.execute('SELECT CONT_ID, COUNTRY_ID, COUNTRY_NAME FROM TB_COUNTRY '
-                        ' WHERE COUNTRY_ID = %s;', (param,))
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "COUNTRY_NAME" FROM TB_COUNTRY '
+                        ' WHERE "COUNTRY_ID" = %s;', (param,))
         elif (type(param) == str):
-            cur.execute("SELECT CONT_ID, COUNTRY_ID, COUNTRY_NAME FROM TB_COUNTRY "
-                        " WHERE COUNTRY_NAME = '%s';", (param,))
+            cur.execute('SELECT "CONT_ID", "COUNTRY_ID", "COUNTRY_NAME" FROM TB_COUNTRY '
+                        " WHERE \"COUNTRY_NAME\" = '%s';", (param,))
         else:
             raise ValueError
 
@@ -1118,7 +1199,8 @@ class dbCountry(dict):
             raise KeyError
         if int(theCountry[0]) not in self.continents:
             theContinent = self.continents.read(int(theCountry[0]))
+        else:
+            theContinent = self.continents[int(theCountry[0])]
         theCountry = Country(theContinent, int(theCountry[1]), theCountry[2])
         self.integrity(theCountry)
-        self.dbConn.commit()
         return theCountry
