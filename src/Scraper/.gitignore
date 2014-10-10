@@ -1,21 +1,9 @@
 *.pyc
-/www.ratebeer.com/
 *.log
 *.err
 *.csv
 /.directory
 *.err.1
-/.gitignore
-/1st version of Browser.get.ipynb
+/*.ipynb
 /Modeler.DBLoad_profile.txt
-/Parser.py
-/Playing with mechanize and bs4.ipynb
-/Scraper.py
-/__init__.py
-/download.sh
-/profile_stats.txt
 /proxy_format
-/ratebeercacher.py
-/ratebeercacher2.py
-/ratebeerscraper.py
-/socks.py

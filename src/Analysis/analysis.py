@@ -4,46 +4,40 @@ Created on 07/10/2014
 @author: bobbruno
 '''
 
-import datetime
+from gensim import utils
 from inspect import isgenerator
 from itertools import izip, product
 import nltk
 from nltk.corpus import stopwords
-from nltk.data import LazyLoader
-from nltk.tokenize import TreebankWordTokenizer
-from nltk.util import AbstractLazySequence, LazyMap, LazyConcatenation
 import pandas
 import psycopg2
 import re
-from tidy.lib import thelib
-import timeit
 
-from Scraper.Parser import Continent, Country, Location, Brewery, Beer, UserRating
-
-from Modeler.dbBridge import dBContinent, dBCountry, dBLocation, dBBrewery, \
-    dBBeer, dBRating, dBRatingIterator
+from Scraper.Parser import Continent, Country, Location, Brewery
 
 
 stemmer = nltk.snowball.EnglishStemmer()
 
+myStemDict = {u'nutty': u'nut',
+              u'reddish': u'red',
+              u'rotten': u'rot',
+              u'rotting': u'rot',
+              u'cristaline': u'cristal',
+              u'red': u'red',
+              u' ': u' ',
+              u'cereal': u'cereal'}
+
 
 def mystem(x):
-    if (x == u'nutty'):
-        return u'nut'
-    if (x == u'reddish'):
-        return u'red'
-    if (x in set([u'rotten', u'rotting'])):
-        return u'rot'
-    if (x == u'cristaline'):
-        return u'cristal'
-    if (' ' in x or x in [u'red', u'cereal']):
-        return x
-    return stemmer.stem(x)
-
+    try:
+        return myStemDict[x]
+    except KeyError:
+        return stemmer.stem(x)
 
 stops = set(stopwords.words('english'))
 stops = {mystem(x) for x in stops}.union(set([u'buddy', u'iphone', u'oz', u'ml', u'pour', u'one',
-                u'cc', u'cl', u'l', u'also', u'thank', u'update', u'get', u'sample', u'style', u'would']))
+                                              u'cc', u'cl', u'l', u'also', u'thank', u'update',
+                                              u'get', u'sample', u'style', u'would']))
 punct = set([u',', u'(', u')', u':', u'-', u'...', u'@', u';', u'*', u'!', u'"', u"'", u'[', u']', u'/', u'---', u'?',
              u'&', u'%', u'--'])
 containerSizes = set([u'750ml', u'500ml', u'350ml', u'0,5l', u'50cl'])
@@ -80,13 +74,16 @@ aroDesignators = {mystem(x) for x in [u'toasted', u'roasted', u'burnt', u'light'
 aroMaltWords = {mystem(x) for x in [u'malt', u'malty', u'barley', u'corn', u'bread', u'cookie', u'molasses', u'caramel',
                                     u'grain', u'hay', u'straw', u'cereal', u'chocolate', u'coffee', u'toffee',
                                     u'nutty', u'meal', u'nuts', u'wheat']}
-aroMaltNGrams = set([u'{} {}'.format(x, y) for x, y in product(aroDesignators, aroMaltWords)])    #  Most of these N-Grams don't make much sense, but then they would not be found.
+
+#  Most of these N-Grams don't make much sense, but then they will not be found anyway
+aroMaltNGrams = set([u'{} {}'.format(x, y) for x, y in product(aroDesignators, aroMaltWords)])
 aroHopsWords = {mystem(x) for x in [u'hops', u'hoppy', u'flowers', u'floral', u'perfume', u'herbs', u'celery', u'grass', u'pine',
-                u'spruce', u'resin', u'citrus', u'grapefruit', u'orange', u'lemon', u'lime', u'grassy']}
-aroHopsNGrams = set([u'{} {}'.format(x, y) for x, y in product(aroDesignators, aroHopsWords)]).union(
-                     set([u'{} bomb'.format(x) for x in aroHopsWords]))
+                                    u'spruce', u'resin', u'citrus', u'grapefruit', u'orange', u'lemon', u'lime', u'grassy']}
+aroHopsNGrams = set([u'{} {}'.format(x, y)
+                     for x, y in product(aroDesignators, aroHopsWords)]).union(set([u'{} bomb'.format(x) for x in aroHopsWords]))
 aroYeastWords = {mystem(x) for x in [u'yeast', u'bacteria', u'dough', u'sweat', u'horse blanket', u'barnyard',
-                 u'leather', u'soap', u'cheese', u'meat', u'broth', u'earth', u'earthy', u'musty', u'leaves']}
+                                     u'leather', u'soap', u'cheese', u'meat', u'broth', u'earth', u'earthy',
+                                     u'musty', u'leaves', u'spiced', u'spicy']}
 aroYeastNGrams = set([u'{} {}'.format(x, y) for x, y in product(aroDesignators, aroYeastWords)])
 aroMiscWords = {mystem(x) for x in [u'alcohol', u'banana', u'bubblegum', u'clove', u'grape', u'raisin', u'plum',
                                     u'prune', u'date', u'apple', u'pear', u'peach', u'pineapple', u'cherry', u'berry',
@@ -105,13 +102,13 @@ aromaWords = aromaBase.union(aroDesignators, aroMaltWords, aroMaltNGrams, aroHop
                              aroYeastWords, aroYeastNGrams, aroMiscWords, aroMiscNGrams)
 
 #  Palate Attributes
-palateBase = {mystem(x) for x in [u'finish', u'aftertaste', u'palate']}
+palateBase = {mystem(x) for x in [u'finish', u'aftertaste', u'palate', u'texture']}
 palBodyWords = {mystem(x) for x in [u'light', u'medium', u'full']}
 palTextureWords = {mystem(x) for x in [u'thin', u'oily', u'creamy', u'sticky',
                                        u'slick', u'alcoholic', u'thick', u'booze', u'minerals', u'gritty']}
 palCarbonationWords = {mystem(x) for x in [u'carbonation', u'fizzy', u'lively', u'average', u'soft', u'flat']}
 palFinishWords = {mystem(x) for x in [u'metallic', u'chalky', u'astringent', u'bitter', u'mouthfeel']}
-palateWords = palBodyWords.union(palTextureWords, palCarbonationWords, palFinishWords)
+palateWords = palateBase.union(palBodyWords, palTextureWords, palCarbonationWords, palFinishWords)
 
 #  Flavor attributes
 #  Most of these usually are the same or additional to aroma. Actual flavor is very limited.
@@ -129,21 +126,21 @@ beerNGrams = appColorNGrams.union(aroMaltNGrams, aroHopsNGrams, aroYeastNGrams,
                                   aroMiscNGrams, flvNgrams)
 
 
-def load(conn, continent=None, country=None, location=None, brewery=None, nLimit=None, sample=False):
+def loadDF(conn=None, continent=None, country=None, location=None, brewery=None, nLimit=None, sample=False):
     """ Loads a pandas dataframe with data from the db connection specified. If any
         restrictions are passed, they will be applied to the query.
     :param conn: the database connection object to be used
     :type conn: psycopg2.connection
-    :param continent: a continent or list of continents, either by id or object. If 
+    :param continent: a continent or list of continents, either by id or object. If
                       not specified, all continents will be loaded
     :type continent: int or Continent or list or None
-    :param country: a country or list of countries, either by id or object. If 
+    :param country: a country or list of countries, either by id or object. If
                       not specified, all countries will be loaded
     :type country: int or Country or list or None
-    :param location: a location or list of locations, either by id or object. If 
+    :param location: a location or list of locations, either by id or object. If
                       not specified, all locations will be loaded
     :type location: int or Location or list or None
-    :param brewery: a brewery or list of breweries, either by id or object. If 
+    :param brewery: a brewery or list of breweries, either by id or object. If
                       not specified, all breweries will be loaded
     :type brewery: int or Brewery or list or None
     :param nLimit: an integer limiting the number of rows to load. If not specified,
@@ -151,6 +148,11 @@ def load(conn, continent=None, country=None, location=None, brewery=None, nLimit
     :type nLimit: int
     :param sample: if set, will take a random (as defined by postgres) sample. Ignored if nLimit is not set
     :type sample: bool"""
+
+    if conn is None:
+        conn = psycopg2.connect(database='BeerDb', user='postgres',
+                                password='postgres', host='localhost',
+                                port=5432)
 
     def writeCondition(field, fieldValue, fieldType, pName):
         retField = fieldValue
@@ -236,7 +238,7 @@ def load(conn, continent=None, country=None, location=None, brewery=None, nLimit
     return df
 
 
-def usesVocab(wordList, vocabSet=beerVocab, cutOff=0.1):
+def usesVocab(wordList, vocabSet=beerVocab, cutOff=0.1, minGoodWords=3):
     """ Checks if a word list is actually using a specific vocabulary. If at least cutOff
     words in the list are contained in that vocabulary.
     :param wordList: The actual list of words to be checked
@@ -246,7 +248,9 @@ def usesVocab(wordList, vocabSet=beerVocab, cutOff=0.1):
     :type cutOff: float
     :param vocabSet: the vocabulary to be checked against. Should be a set of strings
     :type vocabSet: set
-    :rtype: bool """
+    :param minGoodWords: the minimum number of words in the wordList that match the vocabulary
+    :type minGoodWords: int
+    :rtype bool """
     if not isinstance(wordList, list):
         if isgenerator(wordList):
             theList = list(wordList)
@@ -255,36 +259,60 @@ def usesVocab(wordList, vocabSet=beerVocab, cutOff=0.1):
     else:
         theList = wordList
     lSize = len(theList)
-    nStopWords = sum([1 for x in theList if x in vocabSet])
-    if lSize and float(nStopWords) / lSize >= cutOff:
+    nRelevant = lSize - sum([1 for x in theList if x in vocabSet])
+    if lSize and nRelevant >= minGoodWords and float(nRelevant) / lSize >= cutOff:
         return True
     else:
         return False
+
+numRE = re.compile(r'(\$?\d+(\.|,))?\d+(ml|oz|in|cm|cl|l|%)?')
+
+
+def removeVocab(wordList, vocab=toRemove):
+    """ Remove all the words on vocab from the wordList.
+    :param wordList: the text to process, as a list of strings
+    :type wordList: list of unicode
+    :param vocab: the vocabulary to be removed, as a set of tokens
+    :type vocab: set
+    :rtype list  of unicode  """
+
+    def isQuantityOrAmount(w):
+        """ Determines if a token is a quantity or amount
+        :param w: the word to be checked
+        :type w: unicode
+        """
+        return numRE.match(w) is not None
+
+    if isinstance(wordList, tuple):
+        return [w for w in wordList if (w[0] not in vocab or isQuantityOrAmount(w[0]))]
+    else:
+        return [w for w in wordList if (w not in vocab or isQuantityOrAmount(w))]
 
 
 def processBiGrams(wordList, biGramSet=beerNGrams):
     """ Transforms all BiGrams in word list from pairs of tokens into single tokens.
     :param wordList: the list of tokens
-    :type wordList: list
+    :type wordList: list of unicode
     :param biGramSet: the set of biGrams to evaluate against. They are strings, not tuples
-    :type biGramSet: set
-    :rtype: list """
+    :type biGramSet: set of unicode
+    :rtype list of unicode """
     newList = []
     consumed = False
-    for w1, w2 in izip(wordList[:-1], wordList[1:]):
-        if consumed:
-            consumed = False
-            continue
-        if u'{} {}'.format(w1, w2) in biGramSet:
-            newList.append(u'{} {}'.format(w1, w2))
-            consumed = True
-        else:
-            newList.append(w1)
-    if not consumed:
-        newList.append(wordList[-1])
+    if isgenerator(wordList):
+        wordList = list(wordList)
+    if len(wordList):
+        for w1, w2 in izip(wordList[:-1], wordList[1:]):
+            if consumed:
+                consumed = False
+                continue
+            if u'{} {}'.format(w1, w2) in biGramSet:
+                newList.append(u'{} {}'.format(w1, w2))
+                consumed = True
+            else:
+                newList.append(w1)
+        if not consumed:
+            newList.append(wordList[-1])
     return newList
-
-numRE = re.compile(r'(\$?\d+(\.|,))?\d+(ml|oz|in|cm|cl|l|%)?')
 
 
 def isQuantityOrAmount(w):
@@ -295,56 +323,47 @@ def isQuantityOrAmount(w):
     return numRE.match(w) is not None
 
 
-def removeVocab(wordList, vocab=toRemove):
-    """ Remove all the words on vocab from the wordList.
-    :param wordList: the text to process, as a list of strings
-    :type wordList: list
-    :param vocab: the vocabulary to be removed, as a set of tokens
-    :type vocab: set
-    :rtype: list """
-    return [w for w in wordList if (w not in vocab or isQuantityOrAmount(w) or len(w) < 2)]
+def tokenizer(d):
+    """ Returns a list of stemmed tokens based on the text passed to the function.
+        :param d: the text to be tokenized
+        :type d: unicode
+        :rtype list of unicode """
+    if not len(d):
+        return []
+    l = [mystem(x) for x in utils.tokenize(d)]
+    if usesVocab(l):
+        return removeVocab(processBiGrams(l))
+    else:
+        return []
 
 
-class dBLazySequence(AbstractLazySequence):
-    def __init__(self, conn, nLimit=None):
-        self.conts = dBContinent(conn)
-        self.countries = dBCountry(conn, self.conts)
-        self.locations = dBLocation(conn, self.countries)
-        self.breweries = dBBrewery(conn, self.locations)
-        self.beers = dBBeer(conn, self.breweries)
-        self.collection = dBRating(conn, self.beers, nLimit=nLimit)
+def tokenizer2(d):
+    """ Tokenizer that returns a dictionary of the stemmed tokens, with the list of words that were
+        transformed into that token.
+        :param d: the document (text) to be tokenized
+        :type d: unicode
+        :rtype dict of tuple """
+    def myreducer(d, t):
+        """ Receives a dictionary and a tuple of stem and word list. Adds {stem: [currList] + word list} to it.
+        :param d: the dictionary
+        :type d: dict
+        :param t: the tuple, which should be (stem, word list)
+        :type t: tuple
+        :rtype dict """
+        try:
+            d[t[0]] += [t[1]]
+        except KeyError:
+            d[t[0]] = [t[1]]
+        except:
+            print t
+            raise
+        return d
 
-    def __len__(self):
-        return self.collection.count()
-
-    def iterate_from(self, start=0):
-        return dBRatingIterator(self.collection)
-
-
-class dBCorpusReader(object):
-
-    def __init__(self, word_tokenizer=TreebankWordTokenizer(),
-                 sent_tokenizer=LazyLoader('tokenizers/punkt/english.pickle'), **kwargs):
-        self._seq = dBLazySequence(**kwargs)
-        self._word_tokenize = word_tokenizer.tokenize
-        self._sent_tokenize = sent_tokenizer.tokenize
-
-    def text(self):
-        return self._seq
-
-    def words(self):
-        return LazyConcatenation(LazyMap(self._word_tokenize, self.text()))
-
-    def sents(self):
-        return LazyConcatenation(LazyMap(self._sent_tokenize, self.text()))
-
-if __name__ == '__main__':
-    with psycopg2.connect(database='BeerDb', user='postgres',
-                          password='postgres', host='localhost',
-                          port=5432) as conn:
-        #  df = load(conn)
-        nCorpus = dBCorpusReader(conn=conn, nLimit=100)
-        #  dfsub = load(conn, nLimit=120000, sample=True)
-        print datetime.datetime.now().time()
-        print len(nCorpus.sents())
-        print datetime.datetime.now().time()
+    dic = {}
+    if len(d):
+        l = [(mystem(w), w) for w in processBiGrams(utils.tokenize(d), beerNGrams)]
+        if len(l) and usesVocab([w[0] for w in l]):
+            l2 = removeVocab(l)
+            if len(l2):
+                dic = reduce(myreducer, l2, {})
+    return dic
