@@ -131,7 +131,7 @@ palateWords = palateBase | palBodyWords | palTextureWords | palCarbonationWords 
 #  Most of these usually are the same or additional to aroma. Actual flavor is very limited.
 flvDurationWords = {mystem(x) for x in [u'short', u'average', u'long']}
 flvDescriptors = {mystem(x) for x in [u'light', u'moderate', u'heavy', u'harsh']}
-flvTypeWords = {mystem(x) for x in [u'sweet', u'acidic', u'dry', u'bitter', u'vinegar', u'salty',
+flvTypeWords = {mystem(x) for x in [u'sweet', u'acidity', u'acidic', u'dry', u'bitter', u'vinegar', u'salty',
                                     u'minerals', u'sour', u'tart']}
 flvGeneralWords = {mystem(x) for x in [u'flavor', u'flavour', u'taste']}
 flvNgrams = set([u'{} {}'.format(x, y) for x, y in product(flvDescriptors, flvTypeWords)])
