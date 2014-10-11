@@ -274,7 +274,7 @@ def usesVocab(wordList, vocabSet=beerVocab, cutOff=0.1, minGoodWords=3):
     else:
         theList = wordList
     lSize = len(theList)
-    nRelevant = lSize - sum([1 for x in theList if x in vocabSet])
+    nRelevant = lSize - sum([1 for x in theList if x not in vocabSet])
     if lSize and nRelevant >= minGoodWords and float(nRelevant) / lSize >= cutOff:
         return True
     else:
@@ -299,9 +299,9 @@ def removeVocab(wordList, vocab=toRemove):
         return numRE.match(w) is not None
 
     if isinstance(wordList, tuple):
-        return [w for w in wordList if (w[0] not in vocab or isQuantityOrAmount(w[0]))]
+        return [w for w in wordList if (len(w[0].strip()) and (w[0] not in vocab or isQuantityOrAmount(w[0])))]
     else:
-        return [w for w in wordList if (w not in vocab or isQuantityOrAmount(w))]
+        return [w for w in wordList if (len(w.strip()) and (w not in vocab or isQuantityOrAmount(w)))]
 
 
 def processBiGrams(wordList, biGramSet=beerNGrams):
@@ -345,7 +345,7 @@ def tokenizer(d):
         :rtype list of unicode """
     if not len(d):
         return []
-    l = [mystem(x) for x in utils.tokenize(d)]
+    l = [mystem(x.strip()) for x in utils.tokenize(d)]
     if usesVocab(l):
         return removeVocab(processBiGrams(l))
     else:
@@ -376,7 +376,7 @@ def tokenizer2(d):
 
     dic = {}
     if len(d):
-        l = [(mystem(w), w) for w in processBiGrams(utils.tokenize(d), beerNGrams)]
+        l = [(mystem(w.strip()), w.strip()) for w in processBiGrams(utils.tokenize(d), beerNGrams)]
         if len(l) and usesVocab([w[0] for w in l]):
             l2 = removeVocab(l)
             if len(l2):
