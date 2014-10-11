@@ -96,7 +96,7 @@ aroHopsWords = {mystem(x) for x in [u'hops', u'hoppy', u'flowers', u'floral', u'
                                     u'orange', u'lemon', u'lime', u'grassy']}
 aroHopsNGrams = set([u'{} {}'.format(x, y)
                      for x, y in product(aroDesignators,
-                                         aroHopsWords)]) + set([u'{} bomb'.format(x) for x in aroHopsWords])
+                                         aroHopsWords)]) | set([u'{} bomb'.format(x) for x in aroHopsWords])
 aroYeastWords = {mystem(x) for x in [u'yeast', u'bacteria', u'dough', u'sweat', u'horse blanket', u'barnyard',
                                      u'leather', u'soap', u'cheese', u'meat', u'broth', u'earth', u'earthy',
                                      u'musty', u'leaves', u'spiced', u'spicy']}
