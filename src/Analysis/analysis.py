@@ -42,14 +42,14 @@ def mystem(x):
 
 
 stops = {mystem(x) for x in stopwords.words('english')}
-punct = set([u',', u'(', u')', u':', u'-', u'...', u'@', u';', u'*', u'!', u'"', u"'", u'[', u']', u'/', u'---', u'?',
-             u'&', u'%', u'--'])
+punct = set([u',', u'(', u')', u':', u'-', u'...', u'@', u';', u'*', u'!', u'"', u"'", u'[', u']', u'/',
+             u'---', u'?', u'&', u'%', u'--'])
 containerSizes = set([u'750ml', u'500ml', u'350ml', u'0,5l', u'50cl'])
 generalWords = {mystem(x) for x in [u'beer', u'ale', u'brew', u'draft', u'ipa', u'pretty', u'really',
                                     u'buddy', u'iphone', u'oz', u'ml', u'pour', u'one', u'cc', u'cl', u'l',
                                     u'also', u'thank', u'update', u'get', u'sample', u'style', u'would',
                                     u'as', u'well']}
-toRemove = stops + punct + containerSizes + generalWords
+toRemove = stops | punct | containerSizes | generalWords
 
 #  Sentiment attributes
 goodSentiment = {mystem(x) for x in [u'balanced', u'big', u'decent', u'fairly', u'nice', u'excellent', u'good',
@@ -57,7 +57,7 @@ goodSentiment = {mystem(x) for x in [u'balanced', u'big', u'decent', u'fairly', 
 badSentiment = {mystem(x) for x in [u'bad', u'spare', ]}
 unknownSentiment = {mystem(x) for x in [u'almost', u'average', u'bit', u'drinkability', u'like',
                                         u'standard', u'simple', u'basic', u'slightly']}
-sentimentWords = goodSentiment + badSentiment + unknownSentiment
+sentimentWords = goodSentiment | badSentiment | unknownSentiment
 
 #  Appearance Atributes
 #  Problem: I may have an n-gram with light brown, dark brown, etc. Deal with that.
@@ -78,9 +78,9 @@ appParticleBase = {mystem(x) for x in [u'particle', ]}
 appParticleWords = {mystem(x) for x in [u'light', u'cloudy', u'heavily', u'particulate', u'chunky']}
 appColorNGrams = set([u'{} {}'.format(x, y) for x, y
                      in product(colorDesignators, colors)])
-appearanceWords = appColorBase.union(appHeadBase, appHeadWords, appLacingBase,
-                                     appBodyBase, appBodyWords, appParticleBase, appParticleWords,
-                                     colors, colorDesignators, appColorNGrams)
+appearanceWords = (appColorBase | appHeadBase | appHeadWords | appLacingBase |
+                   appBodyBase | appBodyWords | appParticleBase | appParticleWords |
+                   colors | colorDesignators | appColorNGrams)
 
 #  Aroma Attributes
 aromaBase = {mystem(x) for x in [u'aroma', 'nose', u'smell']}
@@ -114,8 +114,8 @@ aroMiscWords = {mystem(x) for x in [u'alcohol', u'banana', u'bubblegum', u'clove
 aroMiscNGrams = set([u'bubble gum', u'soy sauce', u'brown sugar', u'maple syrup', u'cook cabbag',
                      u'paint thinn', u'sour milk', u'rot egg'])
 
-aromaWords = aromaBase.union(aroDesignators, aroMaltWords, aroMaltNGrams, aroHopsWords, aroHopsNGrams,
-                             aroYeastWords, aroYeastNGrams, aroMiscWords, aroMiscNGrams)
+aromaWords = (aromaBase | aroDesignators | aroMaltWords | aroMaltNGrams | aroHopsWords | aroHopsNGrams |
+              aroYeastWords | aroYeastNGrams | aroMiscWords | aroMiscNGrams)
 
 #  Palate Attributes
 palateBase = {mystem(x) for x in [u'finish', u'aftertaste', u'palate', u'texture']}
@@ -125,7 +125,7 @@ palTextureWords = {mystem(x) for x in [u'thin', u'oily', u'creamy', u'sticky', u
 palCarbonationWords = {mystem(x) for x in [u'carbonation', u'fizzy', u'lively', u'average', u'soft', u'flat']}
 palFinishWords = {mystem(x) for x in [u'metallic', u'chalky', u'astringent', u'bitter', u'mouthfeel',
                                       u'lingering']}
-palateWords = palateBase + palBodyWords + palTextureWords + palCarbonationWords + palFinishWords
+palateWords = palateBase | palBodyWords | palTextureWords | palCarbonationWords | palFinishWords
 
 #  Flavor attributes
 #  Most of these usually are the same or additional to aroma. Actual flavor is very limited.
@@ -135,10 +135,10 @@ flvTypeWords = {mystem(x) for x in [u'sweet', u'acidic', u'dry', u'bitter', u'vi
                                     u'minerals', u'sour', u'tart']}
 flvGeneralWords = {mystem(x) for x in [u'flavor', u'flavour', u'taste']}
 flvNgrams = set([u'{} {}'.format(x, y) for x, y in product(flvDescriptors, flvTypeWords)])
-flavorWords = flvDurationWords + flvDescriptors + flvTypeWords + flvNgrams
+flavorWords = flvDurationWords | flvDescriptors | flvTypeWords | flvNgrams
 
-beerVocab = appearanceWords + aromaWords + palateWords + flavorWords + sentimentWords
-beerNGrams = appColorNGrams + aroMaltNGrams + aroHopsNGrams + aroYeastNGrams + aroMiscNGrams + flvNgrams
+beerVocab = appearanceWords | aromaWords | palateWords | flavorWords | sentimentWords
+beerNGrams = appColorNGrams | aroMaltNGrams | aroHopsNGrams | aroYeastNGrams | aroMiscNGrams | flvNgrams
 
 
 def loadDF(conn=None, continent=None, country=None, location=None, brewery=None, nLimit=None, sample=False):
