@@ -355,7 +355,8 @@ def tokenizer(d):
         :rtype list of unicode """
     if not len(d):
         return []
-    l = [mystem(x.strip()) for x in utils.tokenize(d) if len(x.strip())]
+    l = [re.sub('[ _]+', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ _]+', ' ', w).strip())]
+    l = [mystem(x.strip()) for x in l]
     if usesVocab(l):
         l, _ = processBiGrams(l)
         return removeVocab(l)
@@ -387,7 +388,7 @@ def tokenizer2(d):
 
     dic = {}
     if len(d):
-        lW = [re.sub('[ \_]*', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ \_]*', ' ', w).strip())]
+        lW = [re.sub('[ _]+', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ _]+', ' ', w).strip())]
         print lW
         lS = [mystem(w) for w in lW]
         print lS
