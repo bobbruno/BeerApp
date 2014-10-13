@@ -304,30 +304,40 @@ def removeVocab(wordList, vocab=toRemove):
         return [w for w in wordList if (w not in vocab or isQuantityOrAmount(w))]
 
 
-def processBiGrams(wordList, biGramSet=beerNGrams):
+def processBiGrams(stemList, wordList=None, biGramSet=beerNGrams):
     """ Transforms all BiGrams in word list from pairs of tokens into single tokens.
-    :param wordList: the list of tokens
+    :param stemList: the list of tokens
+    :type stemList: list of unicode
+    :param wordList: the list of words
     :type wordList: list of unicode
     :param biGramSet: the set of biGrams to evaluate against. They are strings, not tuples
     :type biGramSet: set of unicode
-    :rtype list of unicode """
-    newList = []
+    :rtype tuple """
+    newSList = []
+    newWList = []
     consumed = False
+    if wordList is None:
+        wordList = stemList
+    if isgenerator(stemList):
+        stemList = list(stemList)
     if isgenerator(wordList):
         wordList = list(wordList)
-    if len(wordList):
-        for w1, w2 in izip(wordList[:-1], wordList[1:]):
+    if len(stemList):
+        for s1, s2, w1, w2 in izip(stemList[:-1], stemList[1:], wordList[:-1], wordList[1:]):
             if consumed:
                 consumed = False
                 continue
-            if u'{} {}'.format(w1, w2) in biGramSet:
-                newList.append(u'{} {}'.format(w1, w2))
+            if u'{} {}'.format(s1, s2) in biGramSet:
+                newSList.append(u'{} {}'.format(s1, s2))
+                newWList.append(u'{} {}'.format(w1, w2))
                 consumed = True
             else:
-                newList.append(w1)
+                newSList.append(s1)
+                newWList.append(w1)
         if not consumed:
-            newList.append(wordList[-1])
-    return newList
+            newSList.append(stemList[-1])
+            newWList.append(wordList[-1])
+    return newSList, newWList
 
 
 def isQuantityOrAmount(w):
@@ -347,7 +357,8 @@ def tokenizer(d):
         return []
     l = [mystem(x.strip()) for x in utils.tokenize(d) if len(x.strip())]
     if usesVocab(l):
-        return removeVocab(processBiGrams(l))
+        l, _ = processBiGrams(l)
+        return removeVocab(l)
     else:
         return []
 
@@ -376,8 +387,9 @@ def tokenizer2(d):
 
     dic = {}
     if len(d):
-        l1 = [re.sub('[ _]*', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ _]*', ' ', w).strip())]
-        l = [(mystem(w), w) for w in processBiGrams(l1, beerNGrams)]
+        lW = [re.sub('[ _]*', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ _]*', ' ', w).strip())]
+        lS = [mystem(w) for w in lW]
+        l = [(s, w) for s, w in  processBiGrams(lS, lW)]
         if len(l) and usesVocab([w[0] for w in l]):
             l2 = removeVocab(l)
             if len(l2):
