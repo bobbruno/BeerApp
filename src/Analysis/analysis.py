@@ -376,7 +376,8 @@ def tokenizer2(d):
 
     dic = {}
     if len(d):
-        l = [(mystem(w), w) for w in processBiGrams(utils.tokenize(d), beerNGrams) if len(w.strip())]
+        l1 = [re.sub('[ _]*', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ _]*', ' ', w).strip())]
+        l = [(mystem(w), w) for w in processBiGrams(l1, beerNGrams)]
         if len(l) and usesVocab([w[0] for w in l]):
             l2 = removeVocab(l)
             if len(l2):
