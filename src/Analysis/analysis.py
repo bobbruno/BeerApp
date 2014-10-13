@@ -387,7 +387,7 @@ def tokenizer2(d):
 
     dic = {}
     if len(d):
-        lW = [re.sub('[ _]*', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ _]*', ' ', w).strip())]
+        lW = [re.sub('[ \_]*', ' ', w).strip() for w in utils.tokenize(d) if len(re.sub('[ \_]*', ' ', w).strip())]
         print lW
         lS = [mystem(w) for w in lW]
         print lS
