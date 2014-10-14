@@ -1,9 +1,0 @@
-﻿create unlogged table tb_rating_keywords as
-select x.beer_id, x.user_id, x.rating_date, array_agg(x.stem_present)
-from
-(select r.beer_id, r.user_id, r.rating_date, s.word_stem, (s.word_stem = any (r.rating_words))::int as stem_present
-    from tb_stem_dict s,
-         tb_rating_notes as r
-    where s.is_keyword
-    order by 1, 2, 3, 4) as x
-    group by 1, 2, 3
