@@ -1,85 +1,25 @@
-﻿create table tb_user_style_percent as
-select R."USER_ID" as user_id, avg((B."BEER_STYLE_ID" = 2)::int) as beer_style_2,
-avg((B."BEER_STYLE_ID" = 3)::int) as beer_style_3,
-avg((B."BEER_STYLE_ID" = 4)::int) as beer_style_4,
-avg((B."BEER_STYLE_ID" = 5)::int) as beer_style_5,
-avg((B."BEER_STYLE_ID" = 6)::int) as beer_style_6,
-avg((B."BEER_STYLE_ID" = 7)::int) as beer_style_7,
-avg((B."BEER_STYLE_ID" = 8)::int) as beer_style_8,
-avg((B."BEER_STYLE_ID" = 9)::int) as beer_style_9,
-avg((B."BEER_STYLE_ID" = 10)::int) as beer_style_10,
-avg((B."BEER_STYLE_ID" = 11)::int) as beer_style_11,
-avg((B."BEER_STYLE_ID" = 12)::int) as beer_style_12,
-avg((B."BEER_STYLE_ID" = 13)::int) as beer_style_13,
-avg((B."BEER_STYLE_ID" = 14)::int) as beer_style_14,
-avg((B."BEER_STYLE_ID" = 15)::int) as beer_style_15,
-avg((B."BEER_STYLE_ID" = 16)::int) as beer_style_16,
-avg((B."BEER_STYLE_ID" = 17)::int) as beer_style_17,
-avg((B."BEER_STYLE_ID" = 18)::int) as beer_style_18,
-avg((B."BEER_STYLE_ID" = 19)::int) as beer_style_19,
-avg((B."BEER_STYLE_ID" = 20)::int) as beer_style_20,
-avg((B."BEER_STYLE_ID" = 21)::int) as beer_style_21,
-avg((B."BEER_STYLE_ID" = 22)::int) as beer_style_22,
-avg((B."BEER_STYLE_ID" = 23)::int) as beer_style_23,
-avg((B."BEER_STYLE_ID" = 24)::int) as beer_style_24,
-avg((B."BEER_STYLE_ID" = 25)::int) as beer_style_25,
-avg((B."BEER_STYLE_ID" = 26)::int) as beer_style_26,
-avg((B."BEER_STYLE_ID" = 27)::int) as beer_style_27,
-avg((B."BEER_STYLE_ID" = 28)::int) as beer_style_28,
-avg((B."BEER_STYLE_ID" = 29)::int) as beer_style_29,
-avg((B."BEER_STYLE_ID" = 31)::int) as beer_style_31,
-avg((B."BEER_STYLE_ID" = 35)::int) as beer_style_35,
-avg((B."BEER_STYLE_ID" = 36)::int) as beer_style_36,
-avg((B."BEER_STYLE_ID" = 37)::int) as beer_style_37,
-avg((B."BEER_STYLE_ID" = 39)::int) as beer_style_39,
-avg((B."BEER_STYLE_ID" = 40)::int) as beer_style_40,
-avg((B."BEER_STYLE_ID" = 41)::int) as beer_style_41,
-avg((B."BEER_STYLE_ID" = 42)::int) as beer_style_42,
-avg((B."BEER_STYLE_ID" = 44)::int) as beer_style_44,
-avg((B."BEER_STYLE_ID" = 45)::int) as beer_style_45,
-avg((B."BEER_STYLE_ID" = 48)::int) as beer_style_48,
-avg((B."BEER_STYLE_ID" = 52)::int) as beer_style_52,
-avg((B."BEER_STYLE_ID" = 53)::int) as beer_style_53,
-avg((B."BEER_STYLE_ID" = 54)::int) as beer_style_54,
-avg((B."BEER_STYLE_ID" = 55)::int) as beer_style_55,
-avg((B."BEER_STYLE_ID" = 56)::int) as beer_style_56,
-avg((B."BEER_STYLE_ID" = 57)::int) as beer_style_57,
-avg((B."BEER_STYLE_ID" = 58)::int) as beer_style_58,
-avg((B."BEER_STYLE_ID" = 59)::int) as beer_style_59,
-avg((B."BEER_STYLE_ID" = 60)::int) as beer_style_60,
-avg((B."BEER_STYLE_ID" = 61)::int) as beer_style_61,
-avg((B."BEER_STYLE_ID" = 62)::int) as beer_style_62,
-avg((B."BEER_STYLE_ID" = 63)::int) as beer_style_63,
-avg((B."BEER_STYLE_ID" = 64)::int) as beer_style_64,
-avg((B."BEER_STYLE_ID" = 65)::int) as beer_style_65,
-avg((B."BEER_STYLE_ID" = 71)::int) as beer_style_71,
-avg((B."BEER_STYLE_ID" = 72)::int) as beer_style_72,
-avg((B."BEER_STYLE_ID" = 73)::int) as beer_style_73,
-avg((B."BEER_STYLE_ID" = 74)::int) as beer_style_74,
-avg((B."BEER_STYLE_ID" = 75)::int) as beer_style_75,
-avg((B."BEER_STYLE_ID" = 76)::int) as beer_style_76,
-avg((B."BEER_STYLE_ID" = 77)::int) as beer_style_77,
-avg((B."BEER_STYLE_ID" = 78)::int) as beer_style_78,
-avg((B."BEER_STYLE_ID" = 79)::int) as beer_style_79,
-avg((B."BEER_STYLE_ID" = 80)::int) as beer_style_80,
-avg((B."BEER_STYLE_ID" = 81)::int) as beer_style_81,
-avg((B."BEER_STYLE_ID" = 82)::int) as beer_style_82,
-avg((B."BEER_STYLE_ID" = 100)::int) as beer_style_100,
-avg((B."BEER_STYLE_ID" = 101)::int) as beer_style_101,
-avg((B."BEER_STYLE_ID" = 102)::int) as beer_style_102,
-avg((B."BEER_STYLE_ID" = 103)::int) as beer_style_103,
-avg((B."BEER_STYLE_ID" = 105)::int) as beer_style_105,
-avg((B."BEER_STYLE_ID" = 106)::int) as beer_style_106,
-avg((B."BEER_STYLE_ID" = 107)::int) as beer_style_107,
-avg((B."BEER_STYLE_ID" = 113)::int) as beer_style_113,
-avg((B."BEER_STYLE_ID" = 114)::int) as beer_style_114,
-avg((B."BEER_STYLE_ID" = 115)::int) as beer_style_115,
-avg((B."BEER_STYLE_ID" = 116)::int) as beer_style_116,
-avg((B."BEER_STYLE_ID" = 117)::int) as beer_style_117,
-avg((B."BEER_STYLE_ID" = 118)::int) as beer_style_118,
-avg((B."BEER_STYLE_ID" = 121)::int) as beer_style_121
+﻿DROP TABLE TB_USER_STYLE_PERCENT;
+create unlogged table features.tb_user_style_percent1 as
+select  R."USER_ID" as user_id,
+        B."BEER_STYLE_ID" as style_id,
+        avg(R."RATING_COMPOUND")/5 as pct_style
 from tb_beer B, tb_rating R
 where B."BEER_ID" = R."BEER_ID" AND
-      R."RATING_COMPOUND" > 3.5 AND
+--      R."USER_ID" = 144019
       R."USER_ID" IN (SELECT user_id from tb_user_stem_percent)
-group by 1
+group by R."USER_ID", B."BEER_STYLE_ID";
+
+insert into features.tb_user_style_percent1
+select user_id, style_id, 0.5 from 
+(
+	select sp.user_id, sl.style_id
+	   from (select distinct user_id from features.tb_user_style_percent1) sp,
+		(SELECT UNNEST(array[  2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
+		15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,
+		28,  29,  31,  35,  36,  37,  39,  40,  41,  42,  44,  45,  48,
+		52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,
+		65,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,
+	       100, 101, 102, 103, 105, 106, 107, 113, 114, 115, 116, 117, 118, 121]) style_id) sl
+	except
+	select user_id, style_id from features.tb_user_style_percent1
+) s;
