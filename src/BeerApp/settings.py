@@ -25,8 +25,6 @@ SECRET_KEY = '&r&95u$h!ulno5@fs#raal&@g70#$#ylq-b1#vms@@8uj&jbhl'
 
 #  SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEFAULT_INDEX_TABLESPACE = 'Beer_ix'
-DEFAULT_TABLESPACE = 'Beer_Data'
 
 TEMPLATE_DEBUG = True
 
@@ -82,6 +80,9 @@ DATABASES = {
     }
 }
 
+DEFAULT_INDEX_TABLESPACE = 'Beer_Ix'
+DEFAULT_TABLESPACE = 'Beer_Data'
+
 #  Internationalization
 #  https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -94,6 +95,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+CHARSET = 'utf8'
 
 
 #  Static files (CSS, JavaScript, Images)

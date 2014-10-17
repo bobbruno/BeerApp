@@ -1,6 +1,6 @@
 from django.contrib import admin
-from BeerNav.models import Country, Location, Brewery, Beer, Style
+from BeerNav.models import Continent, Country, Location, Brewery, Style, City, Beer
 
 #  Register your models here.
 
-admin.site.register([Country, Location, Brewery, Beer, Style])
+admin.site.register([Continent, Country, Location, City, Brewery, Beer, Style])
