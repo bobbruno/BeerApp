@@ -1,0 +1,801 @@
+/*---:[ Thesis CSS reset ]:---*/
+* {
+	margin: 0;
+	padding: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+    color: hsl(12, 57%, 25%);
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+img, abbr, acronym, fieldset {
+	border: 0;
+}
+code {
+	line-height: 1em;
+}
+pre {
+	overflow: auto;
+	clear: both;
+}
+sub, sup {
+	line-height: 0.5em;
+}
+img, .wp-caption {
+	max-width: 100%;
+	height: auto;
+}
+iframe, video, embed, object {
+	display: block;
+	max-width: 100%;
+}
+img {
+	display: block;
+}
+.left, .alignleft, img[align="left"] {
+	display: block;
+	float: left;
+}
+.right, .alignright, img[align="right"] {
+	display: block;
+	float: right;
+}
+.center, .aligncenter, img[align="middle"] {
+	display: block;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+	float: none;
+	clear: both;
+}
+.block, .alignnone {
+	display: block;
+	clear: both;
+}
+.wp-smiley {
+	display: inline;
+}
+input[type=submit] {
+    width: 15em;  height: 3em;
+    background: #390f0f;
+    color: hsl(0, 19%, 92%);
+}
+/* -----------------------------------------------
+INDEX, HEADER, FOOTER, & GLOBAL 
+-------------------------------------------------- */
+	/* Fix the CSS Reset Enforced by Thesis*/
+	h1, h2, h3, h4, h5, h6 { font-weight: bold; }
+
+	h2 {
+		word-wrap: break-word;
+	}
+		
+	.push_jr {
+		height: 30px;
+	}
+
+	.light_red {
+		color:#bd5251;
+	}
+
+	.dark_red {
+		color:#AC2C1F;
+	}
+
+		
+	/* START FOOTER STRUCTURE CLASSES */		
+
+		.first-container {
+			padding-top: 60px;
+		}
+
+		html,
+		body {
+			height: 100%;
+			padding: 0;
+            background-color: #E6E3DA;
+			/* The html and body elements cannot have any padding or margin. */
+		}
+
+		/* Wrapper for page content to push down footer */
+		#wrap {
+			min-height: 100%;
+			height: auto !important;
+			height: 100%;
+			/* Negative indent footer by it's height (including margins, padding, and borders) */
+			margin: 0 auto -211px;
+		}
+
+
+
+		/* Set the fixed height of the footer here */
+		#footer {
+			min-height: 170px; /* Use min-height so that footer will grow responsively for smaller screen sizes */
+			padding: 20px 0;
+			background-color: #E6E3DA;
+			border-top: 1px dotted;
+			border-top-color: #412b1d; 
+		}
+
+		/* Push Height should equal footer height + vertical margins, padding, and borders. */
+		#push {
+			height: 211px;
+		}
+
+		/* Lastly, apply responsive CSS fixes as necessary */
+		@media (max-width: 767px) {
+			body {
+				padding:0 20px;
+			}
+			#footer {
+			  margin-left: -20px;
+			  margin-right: -20px;
+			  padding-left: 20px;
+			  padding-right: 20px;
+			}
+		}
+
+	/* END FOOTER STRUCTURE CLASSES */
+     
+
+
+	/* START FOOTER STYLING CLASSES */
+
+		.credit {
+			padding-top: 10px;
+		}
+	      
+		#footer a {
+			color:#333333;	
+		}
+	      
+		#footer .nav-header {
+			color:#8a6d53;
+		}
+	      
+		#footer ul {
+			padding: 0;
+		}
+	      
+		.social_row {
+			margin-left: 2px;
+		}
+
+		
+		.social_row a i {
+			vertical-align: middle;
+			font-size: 20px;
+			margin-right:4px;
+		}
+
+		.contact {
+			padding-left: 2px;
+			padding-right: 3px;
+			display: block;
+			vertical-align: middle;
+		}
+
+
+		@media (max-width: 767px) {
+
+			  #footer .span3 {
+			  	margin-bottom:20px;
+		  	}	
+		}
+
+	/* END FOOTER STYLING CLASSES */
+
+		
+
+	/* MISC responsive fixes */
+
+		/* Large desktop */
+		@media (min-width: 1200px) {
+			.pintley-intro {
+				margin-top:2em;
+		      	margin-bottom:2em;
+		 	}	
+		}
+ 
+		/* Portrait tablet to landscape and desktop */
+		@media (min-width: 768px) and (max-width: 979px) {
+			.pintley-intro {
+				margin-top:1em;
+		      	margin-bottom:1em;
+		 	}	
+		}
+
+
+
+		@media (max-width: 979px) {
+			.first-container {
+				padding-top: 0px;
+			}
+		}
+
+
+
+		@media (max-width: 480px) {
+			.hero-unit {
+				padding: 20px;
+			}
+		}
+
+	/* END misc responsive fixes */
+
+
+
+	
+	/* START header account dropdown */
+
+      	/* space the account dropdown a bit */
+		#nav-profile-dropdown, #nav-cart-dropdown {margin-left:5px;margin-top:5px;}
+		form#navloginform {margin-bottom:0;padding:10px 20px 15px;}
+		form#navloginform a.lost-password {float:right;padding:5px 0px 5px 10px;}
+		
+		.navbar .brand {
+			padding-top:3px;
+			padding-bottom:9px;
+        }
+        .navbar-header
+            color: hsl(39, 57%, 95%);
+            background: hsl(12, 57%, 25%);
+		}
+
+		/* Prevent User button from going to a second line sometimes */
+		.navbar .user-button {
+			float:right; 
+			margin-left:8px;
+		}
+		
+	/* END header account dropdown */
+
+	
+
+	/* INDEX hero pod */
+
+		.featured-title {
+			font-size: 60px;
+			letter-spacing: -1px;
+			line-height: 1;
+			margin: 0;
+			text-align:center;
+		}
+
+		.featured-subtitle {
+			text-align:center;
+		}
+		
+		.featured-image {
+			display:block;
+			margin-left:auto;
+			margin-right:auto;
+		}
+
+	/* END index hero pod */
+
+
+
+	/* INDEX news module */
+
+
+		#news {
+			margin-left:0px;
+		}
+
+		#news h3 {
+			/* color:#AC2C1F; */
+		}
+
+		#news img {
+			max-width:85%;
+			height:auto;
+		}
+
+	/* END index news module */
+
+
+
+
+
+/* -----------------------------------------------
+BLOG, ARCHIVE, POST 
+-------------------------------------------------- */
+
+		/* post CSS */
+		.post-meta {
+			margin-right: 10px;
+		}
+
+		.post-hr {
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+
+		.byline {
+			margin-bottom:10px;
+		}
+
+		.post_cats_intro, .post_tags_intro {
+			font-weight: bold;
+		}
+
+
+		/* blog CSS */
+		.blog_post {
+			margin-bottom: 40px;
+		}
+
+		.blog_post .post_image {
+			margin-right: 20px;
+			margin-bottom: 10px;
+			max-width: 200px;
+			height: auto;
+		}
+
+
+		/* Previous and Next Navigation */
+		.previous_posts {
+			float:left;
+		}
+
+		.next_posts {
+			float:right;
+		}
+
+
+		/* Widget Spacing */
+		.widget {
+			margin-bottom:30px;
+		}
+
+		/* Shrink the Widget Search Box when the widget well shrinks... */
+		@media (max-width: 979px) and (min-width: 768px) {
+		  input.widget-search {
+		    width: 75px;
+		  }
+		}
+
+		/* Conditionally resize the post container For the ShareThis bar... */
+		@media (max-width: 767px) {
+			.post-container {
+			padding-right: 30px;
+			}
+		}
+
+
+		/* Styling for the Popular Posts "Widget" */
+		.a_popular_post {
+		    display: block;
+		    margin-bottom: 15px;
+		    width: 100%;
+		}
+
+		.popular_posts span {
+		    display: inline;
+		    font-size: 14px;
+		    text-align: left;
+		}
+
+		.popular_posts img {
+		    float: left;
+		    line-height: 0;
+		    margin-right: 10px;
+		    margin-bottom: 10px;
+		    position: relative;
+		    top: 6px;
+		    border: 3px solid #DDDDDD;
+		    outline: 1px solid #BBBBBB;
+		}
+
+		.popular_posts hr {
+		    display: block;
+		    clear: both;
+		    margin: 2px 0 10px 0;
+		}
+
+
+		/* Blog & Archive Excerpts */
+		.pintleyBlogFeaturedImage {
+			float:left; 
+			width:auto;
+		}
+
+		.pintleyBlogFeaturedImage img {
+			padding: 4px;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			margin-right:15px;
+			margin-bottom:5px;
+		}
+
+
+/* -----------------------------------------------
+TOUR CONTENT (and all Modals)
+-------------------------------------------------- */
+
+    /* Center align the text within the three columns below the carousel */
+
+    .tour {
+      text-align: center;
+  	}
+
+    .tour .span4 {
+      text-align: center;
+    }
+    .tour h2 {
+      font-weight: normal;
+    }
+
+    .tour .span4 {
+    	margin-bottom: 40px;
+    }
+
+    .tour .span4 p {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    .popup {
+		display: inline-block;
+		position: relative;
+	}
+
+	.popup:active, .popup:hover {
+		outline: none;
+	}
+
+
+    .popup .plus {
+		height: 30px;
+		width: 30px;
+		position: absolute;
+		top: -12px;
+		right: -12px;
+		background-image: url(tour/icon_popup.png);
+		background-repeat: no-repeat;
+	}
+
+    .popup .close {
+		height: 30px;
+		width: 30px;
+		position: absolute;
+		top: -35px;
+		right: -15px;
+		background-repeat: no-repeat;
+		color:#fff;
+		opacity: 1;
+	}
+
+	.modal-backdrop, 
+	.modal-backdrop.fade.in{
+		opacity: 0.9;
+		filter: alpha(opacity=90);
+		background: #000;
+	}
+
+	.modal-body {
+		padding:5px;
+	}
+
+	/* Prevent the blue outline around modal image links */
+	a.modal_link:focus, a.modal_link:active {
+		border:none; 
+		outline:none;
+	}
+
+	/* Prevent the modal from making the page "jump" by forcing it to not hide the scroll bar */
+	.modal-open {
+		overflow: visible;
+	}
+
+
+/* -----------------------------------------------
+About Sidebar
+-------------------------------------------------- */
+
+.about-nav {
+	padding: 8px 0;
+}
+
+
+/* -----------------------------------------------
+Blog, Post, etc. Responsive Fonts
+-------------------------------------------------- */
+
+/* Large desktop */
+@media (min-width: 1200px) { 
+	.row .span8 h1 {
+		font-size: 45px;
+		line-height: 45px;
+	}
+	.row .span8 h2 {
+		font-size: 28px;
+		line-height: 28px;
+	}
+	.row .span8 h3, h4, h5, h6 {
+		font-size: 22px;
+		line-height: 22px;
+	}
+	.row .span8 p {
+		font-size: 17px;
+		line-height: 26px;
+		margin-bottom:26px;
+	}
+
+	.row .span8 li {
+		font-size: 17px;
+		line-height: 26px;
+	}
+}
+ 
+/* Desktop Default */
+@media (min-width: 980px) and (max-width: 1199px) {
+	.row .span8 h1 {
+		font-size: 39px;
+		line-height: 39px;
+	}
+	.row .span8 h2 {
+		font-size: 24px;
+		line-height: 24px;
+	}
+	.row .span8 h3, h4, h5, h6 {
+		font-size: 19px;
+		line-height: 19px;
+	}
+	.row .span8 p {
+		font-size: 15px;
+		line-height: 23px;
+		margin-bottom:23px;
+	}
+
+	.row .span8 li {
+		font-size: 15px;
+		line-height: 23px;
+		margin-bottom:23px;
+	}
+}
+
+/* Small Desktop & Smaller */
+@media (max-width: 979px) {
+	.row .span8 h1 {
+		font-size: 37px;
+		line-height: 37px;
+	}
+	.row .span8 h2 {
+		font-size: 23px;
+		line-height: 23px;
+	}
+	.row .span8 h3, h4, h5, h6 {
+		font-size: 18px;
+		line-height: 18px;
+	}
+	.row .span8 p {
+		font-size: 14px;
+		line-height: 21px;
+		margin-bottom:21px;
+	}
+	
+	.row .span8 li {
+		font-size: 14px;
+		line-height: 21px;
+		margin-bottom:21px;
+	}
+}
+
+/* -----------------------------------------------
+Blog, Post, etc. Responsive AddThis
+-------------------------------------------------- */
+
+
+/* Small Desktop & Smaller */
+@media (min-width: 980px) {
+/* AddThis Stuff */
+.addthis_span1 {
+min-height: 250px;
+}
+}
+
+.addthis_span1 .at300bs {
+margin-bottom: 5px;
+}
+
+
+/* -----------------------------------------------
+Blog, Post, etc. Responsive Tables
+-------------------------------------------------- */
+
+.alignleft {
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+@media (max-width: 979px) {
+	.row .span8 td {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.row .span td img {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.table_row_header {
+
+}
+
+.table_left {
+	width:230px;
+	padding-right: 20px;
+	padding-bottom: 25px;
+}
+
+.table_right {
+	padding-bottom: 25px;
+}
+
+.post_excerpt {
+min-height: 150px;
+}
+
+/* -----------------------------------------------
+Eventbrite List Styles
+-------------------------------------------------- */
+
+.evb_image {
+	text-align: center;
+}
+
+.evb_image img {
+	max-width: 85%;
+	height: auto;
+	margin: 5px;
+}
+
+.evb_info {
+	
+}
+
+.evb_date_location {
+	font-weight: bold;
+}
+
+.evb_link {
+
+}
+
+.evb_button {
+	display: block;
+	margin: 10px 0;
+}
+
+.events_subtitle {
+	color:#bd5251;
+	margin: 0 0 20px 0;
+	font-size: 28px;
+}
+
+.events_list {
+	margin-top: 20px;
+}
+
+.events_brewers {
+	text-align: center;
+}
+
+.events_brewers img {
+	max-width: 90%;
+	height: auto;
+	margin-bottom: 20px;
+}
+
+
+	/* Push Height should equal footer height + vertical margins, padding, and borders. */
+		#push_landing {
+			height: 81px;
+		}
+
+
+	/* Wrapper for page content to push down footer */
+	#wrap_landing {
+		min-height: 100%;
+		height: auto !important;
+		height: 100%;
+		/* Negative indent footer by it's height (including margins, padding, and borders) */
+		margin: 0 auto -81px;
+	}
+
+	/* LANDING PAGE FOOTER: Set the fixed height of the footer here */
+	#footer_landing {
+		min-height: 40px; /* Use min-height so that footer will grow responsively for smaller screen sizes */
+		padding: 20px 0;
+		background-color: #E6E3DA;
+		border-top: 1px dotted;
+		border-top-color: #412b1d; 
+	}
+
+	/* Lastly, apply responsive CSS fixes as necessary */
+		@media (max-width: 767px) {
+			body {
+				padding:0 20px;
+			}
+			#footer_landing {
+			  margin-left: -20px;
+			  margin-right: -20px;
+			  padding-left: 20px;
+			  padding-right: 20px;
+			}
+		}
+
+
+/* -----------------------------------------------
+Landing Page Styles
+-------------------------------------------------- */
+
+@media (min-width: 1200px) {
+			.pintley-cta-intro {
+				margin-top:1.5em;
+		      	margin-bottom:1.5em;
+		 	}	
+		}
+
+/* Landing Page hero pod */
+
+	#landing-title {
+		font-size: 60px;
+		letter-spacing: -1px;
+		line-height: 1;
+		margin: 0;
+		text-align:center;
+	}
+
+	.landing-subtitle {
+		text-align:center;
+	}
+	
+	.landing-image {
+		display:block;
+		margin-left:auto;
+		margin-right:auto;
+	}
+
+	@media (max-width: 480px) {
+		#landing-title {
+			font-size: 35px;
+			letter-spacing: -1px;
+			line-height: 1;
+			margin: 10px 0 10px 0;
+			text-align:center;
+		}
+
+		.landing-subtitle {
+			line-height: 1.2;
+			margin-bottom: 21px;
+		}
+	}
+
+	.landing-brewers {
+		text-align: center;
+	}
+
+	.landing-brewers img {
+		max-width: 40%;
+		display: inline-block;
+		margin-bottom: 10px;
+	}
+
+	.landing-brewers img:nth-child(odd) {
+		margin-right: 10px;
+	}
+.grid_10 {
+    
+}

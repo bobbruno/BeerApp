@@ -4,6 +4,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator, \
     MinLengthValidator
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from sklearn.neighbors import NearestNeighbors
+
+import cPickle as pickle
+import numpy as np
 
 
 #  Create your models here.
@@ -18,7 +22,7 @@ class Continent(models.Model):
                             validators=[MinLengthValidator(1)])
 
     def __str__(self):
-        return '{}) {}'.format(self.id, self.name)
+        return '{}'.format(self.name)
 
 
 @python_2_unicode_compatible
@@ -32,7 +36,7 @@ class Country(models.Model):
     continent = models.ForeignKey('Continent', on_delete=models.PROTECT, default=0)
 
     def __str__(self):
-        return '{}) {} ({})'.format(self.id, self.name, self.continent.name)
+        return '{}'.format(self.name)
 
 
 @python_2_unicode_compatible
@@ -53,7 +57,7 @@ class Location(models.Model):
     country = models.ForeignKey('Country', on_delete=models.PROTECT, default=0)
 
     def __str__(self):
-        return '{}) {} ({})'.format(self.id, self.name, self.country.name)
+        return '{}'.format(self.name)
 
 
 @python_2_unicode_compatible
@@ -70,7 +74,7 @@ class City(models.Model):
     location = models.ForeignKey('Location', on_delete=models.PROTECT, default=0)
 
     def __str__(self):
-        return '{}) {} ({})'.format(self.id, self.name, self.location.name)
+        return '{}'.format(self.name)
 
 
 @python_2_unicode_compatible
@@ -107,7 +111,7 @@ class Brewery(models.Model):
     location = models.ForeignKey('Location', on_delete=models.PROTECT, default=0)
 
     def __str__(self):
-        return '{}) {} ({} in {})'.format(self.id, self.name, self.type, self.country.name)
+        return '{} ({})'.format(self.name, self.type)
 
 
 @python_2_unicode_compatible
@@ -123,6 +127,24 @@ class Style(models.Model):
 
     def __str__(self):
         return '{}) {}'.format(self.id, self.name)
+
+
+@python_2_unicode_compatible
+class BeerManager(models.Manager):
+    kMModel = pickle.load(open("static/kmeans.pkl", "r"))
+
+    def get_nearest(self, userPos, nBeers=10):
+        """ Returns the nBeers nearest to the userPos set of coordinates.
+        :param userPos: The set of coordinates on the PCA space that the user chose.
+        :type userPos: dict
+        :param nBeers: The number of nearest beers to be returned
+        :type nBeers: int """
+        userPCA = np.ones(20)
+        for k, v in userPos.iteritems():
+            userPCA[int(k[1:]) - 1] = float(v)
+        pass
+
+
 
 
 @python_2_unicode_compatible
@@ -143,6 +165,7 @@ class Beer(models.Model):
         ("Series", "Series")
     )
 
+    objects = BeerManager()
     name = models.CharField(db_column='beer_name', max_length=100, verbose_name='Beer',
                             blank=False, default='', validators=[MinLengthValidator(1)])
     ABV = models.FloatField(db_column='beer_abv', null=True, blank=True, verbose_name='ABV%',

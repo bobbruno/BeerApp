@@ -1,10 +1,13 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'BeerApp.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+from BeerNav.views import BeerView, BeerListView, HomePageView, PollView
 
-    url(r'^admin/', include(admin.site.urls)),
+
+urlpatterns = patterns('',
+                       url(r'(^$|^index.html$)', HomePageView.as_view()),
+                       url(r'^beers/', BeerListView.as_view()),
+                       url(r'^beer/(?P<pk>\d+)', BeerView.as_view()),
+                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^poll/', PollView.as_view()),
 )

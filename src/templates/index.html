@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block body %}
+    <h1>My Next Beer!</h1>
+        <h2>Find beer you like, fast and easy!</h2>
+
+        <!--
+            MADE WITH <3 AND JAVASCRIPT
+        -->
+
+        <!--
+            WHAT IS BRACKETS?
+        -->
+        <p>
+            <em>Welcome, appreciators of craft beer.</em>
+            This site is here to help you on your quest to find the beers you love among all those options out there. We know that trying new brews and acquiring new tastes is an essential part of the craft beer experience, but the variety is so great that sometimes it gets overwhelming. That's what we are here for.
+        </p>
+        <p>
+            You all have some idea of what kinds of taste, aroma and appearance you like, but how to find, on that very long list available on your favorite bar or store, which beers will deliver what you're looking for ?
+        </p>
+        <p>
+            This site will help you with that.
+        </p>
+        <form action="/poll" display="inline">
+            <input type="submit" value="Let's get started" class="btn btn-primary btn-lg">
+        </form>
+{% endblock %}

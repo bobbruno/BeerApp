@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load floppyforms %}
+{% block body %}
+    <h1>Beer Preferences</h1>
+    <p>Please answer the following questions by adjusting the sliders towards your preference for each question. Questions are self-contained, so consider each one independently.
+<br>
+if you are not sure about any question, just leave the slider in the middle.</p>
+    <div class="container-fluid">
+            <form action="beeer_list" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="row">
+                        <div class="col-md-3">
+                            {{ field.label_tag }}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="fieldWrapper">
+                                {{ field.errors }}
+                                {{ field }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="id_q1">{{ field.field.rlabel }}:</label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <input type="submit" value="Submit" class="btn btn-primary btn-lg"/>
+            </form>
+    </div>
+{% endblock %}
