@@ -129,7 +129,6 @@ class Style(models.Model):
         return '{}) {}'.format(self.id, self.name)
 
 
-@python_2_unicode_compatible
 class BeerManager(models.Manager):
     kMModel = pickle.load(open("static/kmeans.pkl", "r"))
 
