@@ -2,9 +2,9 @@
 {% load floppyforms %}
 {% block body %}
     <h1>Beer Preferences</h1>
-    <p>Please answer the following questions by adjusting the sliders towards your preference for each question. Questions are self-contained, so consider each one independently.
+    <p>Please choose your preferences by adjusting each slider towards the description that you like most. Each selection should be considered independently from the others.
 <br>
-if you are not sure about any question, just leave the slider in the middle.</p>
+It is ok to move the slider just a bit to one side. if don't have any preference for a choice, just leave it in the middle.</p>
     <div class="container-fluid">
             <form action="beeer_list" method="post">
                 {% csrf_token %}
