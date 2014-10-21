@@ -14,5 +14,6 @@ class BeerTable(tables.Table):
     class Meta:
         model = Beer
         sequence = ('rank', 'name', 'brewery', 'country', 'style', 'overallRating', 'ABV')
+        fields = sequence
 
     rank = tables.Column('Rank', 'rank', visible=True, orderable=True, order_by=u'rank')
