@@ -37,8 +37,8 @@ class SliderField(forms.FloatField):
 
 
 class PollForm(forms.Form):
-    q1 = SliderField(label="Medium head, refereshing, acid, Bitter, clear, pale golden/straw color, fresh, hoppy, malty, grassy, light flavor, thin texture, bitter finish",
-                     rlabel='Thick head, alcohol, dark brown or black, full rich body, strong taste, roasted malts, spices, caramel, fruit, chocolate aroma, creamy, dry finish',
+    q1 = SliderField(label='Thick head, alcohol, dark brown or black, full rich body, strong taste, roasted malts, spices, caramel, fruit, chocolate aroma, creamy, dry finish',
+                     rlabel="Medium head, refereshing, acid, Bitter, clear, pale golden/straw color, fresh, hoppy, malty, grassy, light flavor, thin texture, bitter finish",
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
     q2 = SliderField(label="Question 2", rlabel='Test 2',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
