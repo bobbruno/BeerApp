@@ -3,6 +3,7 @@ from django.views.generic import DetailView, ListView, TemplateView, FormView
 
 from BeerNav.forms import PollForm
 from BeerNav.models import Beer
+import BeerNav.skModels as skModels
 
 
 #  I have to change this view to get a nice result and then allow the user to go to beer details
@@ -13,9 +14,7 @@ class BeerListView(ListView):
 
     def get(self, request):
         print request.session['pollData']
-        #  This is where I have to actually find the beers to recommend
-        #  BeerList = get_nearest(request.session['pollData'])
-        BeerList = [189385, 195778, 204101, 208450, 163204, 113855, 208445, 239419, 213248, 89836]
+        BeerList = skModels.get_nearest(request.session['pollData'])
         self.queryset = Beer.objects.filter(pk__in=BeerList)
         return super(BeerListView, self).get(request)
 

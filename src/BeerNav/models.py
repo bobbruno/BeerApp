@@ -4,9 +4,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator, \
     MinLengthValidator
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
-from sklearn.neighbors import NearestNeighbors
 
-import cPickle as pickle
+import BeerNav.skModels as skModels
 import numpy as np
 
 
@@ -130,7 +129,6 @@ class Style(models.Model):
 
 
 class BeerManager(models.Manager):
-    kMModel = pickle.load(open("static/kmeans.pkl", "r"))
 
     def get_nearest(self, userPos, nBeers=10):
         """ Returns the nBeers nearest to the userPos set of coordinates.
@@ -141,9 +139,8 @@ class BeerManager(models.Manager):
         userPCA = np.ones(20)
         for k, v in userPos.iteritems():
             userPCA[int(k[1:]) - 1] = float(v)
-        pass
-
-
+        _, theBeers = skModels.knn.kneighbors(userPCA, nBeers)
+        return list(skModels.dfBeerData[theBeers][0])
 
 
 @python_2_unicode_compatible
