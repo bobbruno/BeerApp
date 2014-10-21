@@ -10,7 +10,6 @@ import BeerNav.skModels as skModels
 #  (maybe as a subform at the bottom)
 class BeerListView(ListView):
     model = Beer
-    paginate_by = 10
 
     def get(self, request):
         print request.session['pollData']
