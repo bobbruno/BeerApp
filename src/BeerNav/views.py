@@ -21,7 +21,8 @@ class BeerListView(SingleTableView):
         return Beer.objects.filter(pk__in=BeerList)
 
     def get_table(self, **kwargs):
-        table = super(BeerListView, self).get_table(self.ranks)
+        table = super(BeerListView, self).get_table()
+        table.table_data = self.ranks
         RequestConfig(self.request).configure(table)
         return table
 
