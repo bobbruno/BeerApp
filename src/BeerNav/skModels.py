@@ -40,7 +40,7 @@ def get_nearest(userPos, nBeers=10):
     BeerList = np.c_[dfBeerData.index[theBeers[0]].values, dists[0]]
     ranks = {}
     for r, b in enumerate(BeerList[:, 0]):
-        ranks[b] = r
+        ranks[int(b)] = r + 1
     return ranks, list(BeerList[:, 0])
 
 beerPCA = pickle.load(open('static/pca.pkl'))
