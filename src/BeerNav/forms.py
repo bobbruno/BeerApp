@@ -43,7 +43,8 @@ class PollForm(forms.Form):
     q2 = SliderField(label="Medium white head, lasting lacing, alcohol, cloudy amber/gold, malty, grapefruit, floral, very strong hoppy citrus, refreshing, caramel, strong body, creamy mouthfeel, dry finish",
                      rlabel='Beige small  head, clear, dark brown, fruity, roasted malts, strong coffee, chocolate aroma, sweet, sour, medium body',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
-    q3 = SliderField(label="Question 3", rlabel='Test 3',
+    q3 = SliderField(label="Hazy light straw/yellow color, medium head. Spices, yeast and wheat aroma, banana and cloves, lemon. Little carbonation. Sweet taste.",
+                     rlabel='Clear amber/golden color, small white head. Grass, strong hops and citrus aroma, orange notes. Bitter taste, dry finish.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
     q4 = SliderField(label="Question 4", rlabel='Test 4',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
