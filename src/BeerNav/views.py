@@ -14,7 +14,7 @@ class BeerListView(ListView):
 
     def get(self, request):
         print request.session['pollData']
-        BeerList = skModels.get_nearest(request.session['pollData'])
+        BeerList = skModels.get_nearest(request.session['pollData'], 50)
         self.queryset = Beer.objects.filter(pk__in=BeerList)
         return super(BeerListView, self).get(request)
 
