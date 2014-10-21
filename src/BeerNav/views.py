@@ -1,21 +1,25 @@
 from django.http.response import HttpResponseRedirect
-from django.views.generic import DetailView, ListView, TemplateView, FormView
+from django.views.generic import DetailView, TemplateView, FormView
+from django_tables2 import SingleTableView
 
 from BeerNav.forms import PollForm
 from BeerNav.models import Beer
 import BeerNav.skModels as skModels
+from BeerNav.tables import BeerTable
 
 
 #  I have to change this view to get a nice result and then allow the user to go to beer details
 #  (maybe as a subform at the bottom)
-class BeerListView(ListView):
-    model = Beer
 
-    def get(self, request):
-        print request.session['pollData']
-        BeerList = skModels.get_nearest(request.session['pollData'], 50)
-        self.queryset = Beer.objects.filter(pk__in=BeerList)
-        return super(BeerListView, self).get(request)
+
+class BeerListView(SingleTableView):
+    model = Beer
+    table_class = BeerTable
+
+    def get_queryset(self):
+        #  return SingleTableView.get_queryset(self)(self, request):
+        BeerList = skModels.get_nearest(self.request.session['pollData'], 50)
+        return Beer.objects.filter(pk__in=BeerList)
 
 
 class BeerView(DetailView):

@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 #  Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.conf.global_settings import DEFAULT_INDEX_TABLESPACE, DEFAULT_TABLESPACE, \
-    TEMPLATE_DIRS, STATICFILES_DIRS
+    TEMPLATE_DIRS, STATICFILES_DIRS, TEMPLATE_CONTEXT_PROCESSORS
 import os
 
 
@@ -47,7 +47,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'allaccess',
     'BeerNav',
-    'floppyforms'
+    'floppyforms',
+    'django_tables2'
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -109,3 +110,7 @@ CHARSET = 'utf8'
 #  https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#  New settings
+
+TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)

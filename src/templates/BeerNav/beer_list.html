@@ -3,8 +3,7 @@
 {% block content %}
     <h2>Beers</h2>
     <ul>
-        {% for beer in object_list %}
-            <li>{{ beer.name }}</li>
-        {% endfor %}
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
     </ul>
 {% endblock %}
