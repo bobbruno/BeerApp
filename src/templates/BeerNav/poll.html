@@ -12,11 +12,11 @@ It is ok to move the slider just a bit to one side. if don't have any preference
                 {% for field in form %}
                     <div class="row">
                         <div class="col-md-3">
-                            <br><br>
                             {{ field.label_tag }}
                         </div>
                         <div class="col-md-6">
                             <div class="fieldWrapper">
+                                <br><br>
                                 {{ field.errors }}
                                 {{ field }}
                             </div>
