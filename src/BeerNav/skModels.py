@@ -28,14 +28,14 @@ def get_nearest(userPos, nBeers=10):
     """ Returns the nBeers nearest to the userPos set of coordinates.
     :param userPos: The set of coordinates on the PCA space that the user chose.
     :type userPos: dict
-    :param nBeers: The number of nearest beers to be returned
+    :param nBeers: The number of nearest beers to be returned[
     :type nBeers: int """
     userPCA = np.ones(20)
     for k, v in userPos.iteritems():
         i = int(k[1:]) - 1
         userPCA[i] = float(v) * dfBeerData.iloc[i].max() + (1 - float(v)) * dfBeerData.iloc[i].min()
     dists, theBeers = knn.kneighbors(userPCA, nBeers)
-    BeerList = np.vstack((dfBeerData.index[theBeers[0]].values, dists[0])).T.sort()
+    BeerList = np.c_[dfBeerData.index[theBeers[0]].values, dists[0]].sort()
     ranks = {}
     for r, b in enumerate(BeerList[:, 0]):
         ranks[b] = r
