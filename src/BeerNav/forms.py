@@ -52,7 +52,8 @@ class PollForm(forms.Form):
     q5 = SliderField(label="Only in bottles. Clear yellow, soft carbonation, medium, lasting head. Aroma of malt, hops and herbs. Bitter taste, bittersweet finish.",
                      rlabel='Striking bottle design. Dark, transparent yellow. Aroma of stale hops, corn and strong alcohol. Dry, watery, oily taste, with strong alcohol accents.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
-    q6 = SliderField(label="Question 6", rlabel='Test 6',
+    q6 = SliderField(label="Clear Reddish amber/brown color, soft carbonation, small off-white head and lacing. Toffee, caramel malt aroma. Sweet malt taste, medium body. Sweet aftertaste.",
+                     rlabel='Hazy straw/golden color, thick lasting white head, with strong lacing. Citrus, tropical fruits and strong hops aroma. Bitter/citrusy hops taste and bitter, dry  aftertaste.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
     q7 = SliderField(label="Question 7", rlabel='Test 7',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
