@@ -16,4 +16,4 @@ class BeerTable(tables.Table):
         sequence = ('rank', 'name', 'brewery', 'country', 'style', 'overallRating', 'ABV')
         fields = sequence
 
-    rank = tables.Column('Rank', 'rank', visible=True, orderable=True, order_by=u'rank')
+    rank = tables.Column('Rank', 'id', visible=True, orderable=True, order_by=u'rank')

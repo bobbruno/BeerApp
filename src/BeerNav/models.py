@@ -125,7 +125,7 @@ class Style(models.Model):
                             unique=True, default='', validators=[MinLengthValidator(1)])
 
     def __str__(self):
-        return '{}) {}'.format(self.id, self.name)
+        return '{}'.format(self.name)
 
 
 class BeerManager(models.Manager):
