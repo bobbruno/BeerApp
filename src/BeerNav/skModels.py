@@ -34,7 +34,7 @@ def get_nearest(userPos, nBeers=10):
     for k, v in userPos.iteritems():
         userPCA[int(k[1:]) - 1] = float(v)
     _, theBeers = knn.kneighbors(userPCA, nBeers)
-    return list(dfBeerData[theBeers][0])
+    return list(dfBeerData.index[theBeers[0]])
 
 beerPCA = pickle.load(open('static/pca.pkl'))
 beerKM = pickle.load(open('static/kmeans.pkl'))
