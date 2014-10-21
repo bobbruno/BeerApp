@@ -37,6 +37,8 @@ def get_nearest(userPos, nBeers=10):
     dists, theBeers = knn.kneighbors(userPCA, nBeers)
     print type(dfBeerData.index[theBeers[0]].values)
     print dfBeerData.index[theBeers[0]].shape
+    print type(dists)
+    print dists.shape
     BeerList = np.concatenate((dfBeerData.index[theBeers[0]].values, dists), axis=1).sort
     ranks = {}
     for r, b in enumerate(BeerList[:, 0]):
