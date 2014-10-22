@@ -17,4 +17,7 @@ class BeerTable(tables.Table):
         fields = sequence
         attrs = {'class': 'table'}
 
-    rank = tables.Column('Rank', 'pk', visible=True, orderable=True)
+    rank = tables.Column('Rank', 'ranker.pk', visible=True, orderable=True)
+
+    def ranker(self, key):
+        return self.table_data[key]
