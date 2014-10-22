@@ -24,5 +24,5 @@ class BeerTable(tables.Table):
 
     def ranker(self, key):
         return self.table_data[key]
-    rank = tables.Column('Rank', 'table_data.pk', visible=True, orderable=True)
+    rank = tables.Column('Rank', 'pk', visible=True, orderable=True)
 
