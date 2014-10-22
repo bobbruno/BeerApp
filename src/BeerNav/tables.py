@@ -3,9 +3,14 @@ Created on 21/10/2014
 
 @author: bobbruno
 '''
+from django_tables2.utils import Accessor
+
 from BeerNav.models import Beer
 import django_tables2 as tables
 
+
+class MyAcessor(Accessor):
+    SEPARATOR = ';'
 
 class BeerTable(tables.Table):
     '''
@@ -17,7 +22,7 @@ class BeerTable(tables.Table):
         fields = sequence
         attrs = {'class': 'table'}
 
-    rank = tables.Column('Rank', 'ranker.pk', visible=True, orderable=True)
+    rank = tables.Column('Rank', BeerTable.ranker, visible=True, orderable=True)
 
     def ranker(self, key):
         return self.table_data[key]
