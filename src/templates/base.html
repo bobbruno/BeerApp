@@ -26,8 +26,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" class="init">
-        {% block jsinitcode %}
-        {% endblock %}
+            $(document).ready(function() {
+                $('#beertable').DataTable();
+            } );
         </script>
     </head>
     <body id="{% block body_id %}{% endblock %}">
