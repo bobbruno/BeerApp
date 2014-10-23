@@ -125,7 +125,7 @@ class Style(models.Model):
         return '{}'.format(self.name)
 
 
-@python_2_unicode_compatible
+#  @python_2_unicode_compatible
 class Beer(models.Model):
     """
     A beer is a beer is a beer.
