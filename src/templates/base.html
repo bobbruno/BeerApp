@@ -25,6 +25,8 @@
 	    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js"></script>
+        {% block headext %}
+        {% endblock %}
     </head>
     <body id="{% block body_id %}{% endblock %}">
          <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
