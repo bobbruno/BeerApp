@@ -47,8 +47,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'allaccess',
     'BeerNav',
-    'floppyforms',
-    'django_tables2'
+    'floppyforms'
 )
 
 AUTHENTICATION_BACKENDS = (

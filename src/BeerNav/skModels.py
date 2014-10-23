@@ -35,8 +35,8 @@ def get_nearest(userPos, nBeers=10):
         i = int(k[1:]) - 1
         userPCA[i] = float(v) * dfBeerData.iloc[i].max() + (1 - float(v)) * dfBeerData.iloc[i].min()
     dists, theBeers = knn.kneighbors(userPCA, nBeers)
-    print dfBeerData.index[theBeers[0]].values
-    print dists[0]
+    #  print dfBeerData.index[theBeers[0]].values
+    #  print dists[0]
     BeerList = np.c_[dfBeerData.index[theBeers[0]].values, dists[0]]
     ranks = {}
     for r, b in enumerate(BeerList[:, 0]):

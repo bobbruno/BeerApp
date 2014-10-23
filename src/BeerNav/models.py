@@ -128,21 +128,6 @@ class Style(models.Model):
         return '{}'.format(self.name)
 
 
-class BeerManager(models.Manager):
-
-    def get_nearest(self, userPos, nBeers=10):
-        """ Returns the nBeers nearest to the userPos set of coordinates.
-        :param userPos: The set of coordinates on the PCA space that the user chose.
-        :type userPos: dict
-        :param nBeers: The number of nearest beers to be returned
-        :type nBeers: int """
-        userPCA = np.ones(20)
-        for k, v in userPos.iteritems():
-            userPCA[int(k[1:]) - 1] = float(v)
-        _, theBeers = skModels.knn.kneighbors(userPCA, nBeers)
-        return list(skModels.dfBeerData[theBeers][0])
-
-
 @python_2_unicode_compatible
 class Beer(models.Model):
     """
@@ -161,7 +146,6 @@ class Beer(models.Model):
         ("Series", "Series")
     )
 
-    objects = BeerManager()
     name = models.CharField(db_column='beer_name', max_length=100, verbose_name='Beer',
                             blank=False, default='', validators=[MinLengthValidator(1)])
     ABV = models.FloatField(db_column='beer_abv', null=True, blank=True, verbose_name='ABV%',
