@@ -184,5 +184,5 @@ class Beer(models.Model):
     city = models.ForeignKey('City', on_delete=models.PROTECT, null=True)
     style = models.ForeignKey('Style', on_delete=models.PROTECT, default=0)
 
-    def __str__(self):
-        return '{}) {} (from {})'.format(self.id, self.name, self.brewery.name)
+    #  def __str__(self):
+    #    return '{}) {} (from {})'.format(self.id, self.name, self.brewery.name)
