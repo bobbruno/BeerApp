@@ -143,6 +143,7 @@ class Beer(models.Model):
         ("Series", "Series")
     )
 
+    rank = 0
     name = models.CharField(db_column='beer_name', max_length=100, verbose_name='Beer',
                             blank=False, default='', validators=[MinLengthValidator(1)])
     ABV = models.FloatField(db_column='beer_abv', null=True, blank=True, verbose_name='ABV%',
