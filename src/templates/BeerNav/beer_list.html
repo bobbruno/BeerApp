@@ -2,60 +2,48 @@
 {% block content %}
     <h2>Beers</h2>
     <ul>
-        <div id="beertable_wrapper" class="dataTables_wrapper">
-            <div class="dataTables_length" id="example_length">
-                <label>Show 
-                    <select name="example_length" aria-controls="example" class="">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option><
-                        option value="100">100</option>
-                    </select> entries
-                </label>
-            </div>
-            <table class="display" id="beertable" cellspacing="0" width="100%">
-                <thead>
+        <table class="display" id="beertable" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Beer</th>
+                    <th>Brewer</th>
+                    <th>Style</th>
+                    <th>IBU</th>
+                    <th>ABV</th>
+                    <th>Country</th>
+                    <th>Overall Rating</th>
+                    <th>Style Rating</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Rank</th>
+                    <th>Beer</th>
+                    <th>Brewer</th>
+                    <th>Style</th>
+                    <th>IBU</th>
+                    <th>ABV</th>
+                    <th>Country</th>
+                    <th>Overall Rating</th>
+                    <th>Style Rating</th>
+                </tr>
+            </tfoot>
+            {% for beer in object_list %}
+                <tbody>
                     <tr>
-                        <th>Rank</th>
-                        <th>Beer</th>
-                        <th>Brewer</th>
-                        <th>Style</th>
-                        <th>IBU</th>
-                        <th>ABV</th>
-                        <th>Country</th>
-                        <th>Overall Rating</th>
-                        <th>Style Rating</th>
+                        <td>{{ beer.rank }}</td>
+                        <td>{{ beer.name }}</td>
+                        <td>{{ beer.brewery }}</td>
+                        <td>{{ beer.style }}</td>
+                        <td>{{ beer.IBU }}</td>
+                        <td>{{ beer.ABV }}</td>
+                        <td>{{ beer.country }}</td>
+                        <td>{{ beer.overallRating }}</td>
+                        <td>{{ beer.styleRating }}</td>
                     </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Beer</th>
-                        <th>Brewer</th>
-                        <th>Style</th>
-                        <th>IBU</th>
-                        <th>ABV</th>
-                        <th>Country</th>
-                        <th>Overall Rating</th>
-                        <th>Style Rating</th>
-                    </tr>
-                </tfoot>
-                {% for beer in object_list %}
-                    <tbody>
-                        <tr>
-                            <td>{{ beer.rank }}</td>
-                            <td>{{ beer.name }}</td>
-                            <td>{{ beer.brewery }}</td>
-                            <td>{{ beer.style }}</td>
-                            <td>{{ beer.IBU }}</td>
-                            <td>{{ beer.ABV }}</td>
-                            <td>{{ beer.country }}</td>
-                            <td>{{ beer.overallRating }}</td>
-                            <td>{{ beer.styleRating }}</td>
-                        </tr>
-                    </tbody>
-                {% endfor %}
-            </table>
-        </div>
+                </tbody>
+            {% endfor %}
+        </table>
     </ul>
 {% endblock %}
