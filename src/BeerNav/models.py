@@ -5,9 +5,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator, \
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
-import BeerNav.skModels as skModels
-import numpy as np
-
 
 #  Create your models here.
 @python_2_unicode_compatible

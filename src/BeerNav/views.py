@@ -1,4 +1,3 @@
-from behave.model import Row
 from django.http.response import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, TemplateView, FormView
 
