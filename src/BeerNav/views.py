@@ -16,7 +16,7 @@ class BeerListView(ListView):
         #  return SingleTableView.get_queryset(self)(self, request):
         self.ranks, BeerList = skModels.get_nearest(self.request.session['pollData'], 50)
         return Beer.objects.filter(pk__in=BeerList).only('pk', 'name', 'brewery', 'style',
-                                                         'IBU', 'ABV', 'Country', 'overallRating', 'styleRating')
+                                                         'IBU', 'ABV', 'country', 'overallRating', 'styleRating')
 
     def get_context_data(self, **kwargs):
         context = ListView.get_context_data(self, **kwargs)
