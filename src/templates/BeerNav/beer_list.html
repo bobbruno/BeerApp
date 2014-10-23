@@ -39,8 +39,8 @@
                     <th>Style Rating</th>
                 </tr>
             </tfoot>
-            {% for beer in object_list %}
-                <tbody>
+            <tbody>
+                {% for beer in object_list %}
                     <tr>
                         <td>{{ beer.rank }}</td>
                         <td>{{ beer.name }}</td>
@@ -52,8 +52,8 @@
                         <td>{{ beer.overallRating }}</td>
                         <td>{{ beer.styleRating }}</td>
                     </tr>
-                </tbody>
-            {% endfor %}
+                {% endfor %}
+            </tbody>
         </table>
     </ul>
 {% endblock %}
