@@ -21,7 +21,7 @@ class BeerListView(ListView):
     def get_context_data(self, **kwargs):
         context = ListView.get_context_data(self, **kwargs)
         for row in context['object_list']:
-            row['rank'] = self.ranks[row['pk']]
+            row['rank'] = self.ranks[row.id]
         return context
 
 
