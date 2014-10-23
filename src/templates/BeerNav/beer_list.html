@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+        <script type="text/javascript" class="init">
+            $(document).ready(function() {
+                $('#beertable').DataTable( {
+                    "order": [[ 0, "asc" ]]
+                });
+            } );
+        </script>
+
 {% block content %}
     <h2>Beers</h2>
     <ul>
