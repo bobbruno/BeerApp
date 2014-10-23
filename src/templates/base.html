@@ -22,6 +22,13 @@
         <script src="https://cdn.jsdelivr.net/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+	    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" class="init">
+        {% block jsinitcode %}
+        {% endblock %}
+        </script>
     </head>
     <body id="{% block body_id %}{% endblock %}">
          <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -46,9 +53,6 @@
                 </div><!--.nav-collapse -->
             </div>
         </nav>
-	    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js"></script>
      <div id="body" class="container">
         {% block body %}
           <div>
