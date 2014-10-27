@@ -55,13 +55,17 @@ class PollForm(forms.Form):
     q6 = SliderField(label="Clear Reddish amber/brown color, soft carbonation, small off-white head and lacing. Toffee, caramel malt aroma. Sweet malt taste, medium body. Sweet aftertaste.",
                      rlabel='Hazy straw/golden color, thick lasting white head, with strong lacing. Citrus, tropical fruits and strong hops aroma. Bitter/citrusy hops taste and bitter, dry  aftertaste.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
-    q7 = SliderField(label="Question 7", rlabel='Test 7',
+    q7 = SliderField(label="Hazy yellow. Aroma of banana, cloves and citrus. Flavor follows. Acid, bittersweet finish, some yeast.",
+                     rlabel='Dark reddish, murky brown, some bubbles in the head. Aroma of cherries, wine, wood and vinegar. Sour malty taste. Tart, sour finish.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
-    q8 = SliderField(label="Question 8", rlabel='Test 8',
+    q8 = SliderField(label="Pitch black, little brown head. Very high alcohol content. Alcohol aroma, with peat and chocolate. Taste follows aroma with some sweetness. Full body. Alcohol, peat, dry finish.",
+                     rlabel='From cask. Clear reddish brown color, off-white head. Malt and citrus aromas, taste of malt, toffee and caramel. Medium body. Bitter and sweet finish.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
-    q9 = SliderField(label="Question 9", rlabel='Test 9',
+    q9 = SliderField(label="Orange/brown color. Aroma of red fruits and cherries. Sour, acid taste, with hints of caramel. Tart, fruity finish.",
+                     rlabel='Cloudy golden. Aroma of citrus, wheat, caramel and spices, with hops. Mildly bitter taste with lots of malt and dry aftertaste.',
                      widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
-    q10 = SliderField(label="Question 10", rlabel='Test 10',
+    q10 = SliderField(label="Clear copper/amber. Smell of sugar, apples and alcohol. Alcohol and sugar candy taste.",
+                      rlabel='Hazy orange/amber color. Smell of lemon, hops and acetone, sour and yeast notes. Medium carbonation, light body. Bitter flavor, together with sourness in aftertaste.',
                       widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))
     q11 = SliderField(label="Question 11", rlabel='Test 11',
                       widget=Slider({'min': 0., 'max': 1., 'step': 0.1}))

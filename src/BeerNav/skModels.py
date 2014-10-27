@@ -31,9 +31,13 @@ def get_nearest(userPos, nBeers=10):
     :param nBeers: The number of nearest beers to be returned[
     :type nBeers: int """
     userPCA = np.ones(20)
+    nItems = 0
     for k, v in userPos.iteritems():
         i = int(k[1:]) - 1
+        nItems += 1
         userPCA[i] = float(v) * dfBeerData.iloc[i].max() + (1 - float(v)) * dfBeerData.iloc[i].min()
+    for i in range(nItems, 20 - nItems):
+        userPCA[i] = (dfBeerData.iloc[i].max() + dfBeerData.iloc[i].min()) / 2.0
     dists, theBeers = knn.kneighbors(userPCA, nBeers)
     #  print dfBeerData.index[theBeers[0]].values
     #  print dists[0]
